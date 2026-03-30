@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logout button: Stillness secondary color matching web .btn-logout -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/stillness_primary">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/stillness_secondary" />
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+</ripple>

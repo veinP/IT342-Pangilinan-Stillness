@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Stillness</string>
+    <string name="login">LOGIN</string>
+    <string name="register">REGISTER</string>
+    <string name="email">EMAIL</string>
+    <string name="password">PASSWORD</string>
+    <string name="confirm_password">CONFIRM PASSWORD</string>
+    <string name="first_name">FIRST NAME</string>
+    <string name="last_name">LAST NAME</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="login_subtitle">Login to your account</string>
+    <string name="register_title">Create Account</string>
+    <string name="register_subtitle">Register to get started</string>
+    <string name="no_account">Don\'t have an account? Register here</string>
+    <string name="have_account">Already have an account? Login here</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="profile_info">Profile Information</string>
+    <string name="logout">LOGOUT</string>
+    <string name="confirm_logout">Confirm Logout</string>
+    <string name="logout_message">Are you sure you want to log out?</string>
+    <string name="cancel">CANCEL</string>
+    <string name="member_since">MEMBER SINCE</string>
+    <string name="last_updated">LAST UPDATED</string>
+    <string name="continue_with">Or continue with</string>
+    <string name="google_sign_in">Sign in with Google</string>
+</resources>
