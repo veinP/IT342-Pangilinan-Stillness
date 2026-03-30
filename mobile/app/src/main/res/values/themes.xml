@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Stillness Web-Matched Theme -->
+    <style name="Base.Theme.Stillness" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Brand Primary: Blue #2563EB from web -->
+        <item name="colorPrimary">@color/stillness_blue_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- UI Accents -->
+        <item name="colorSecondary">@color/stillness_blue_focus</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Surface/Background: #EFF6FF from web -->
+        <item name="android:windowBackground">@color/stillness_bg</item>
+        <item name="android:statusBarColor">@color/stillness_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
+    </style>
+
+    <style name="Theme.Stillness" parent="Base.Theme.Stillness" />
+</resources>

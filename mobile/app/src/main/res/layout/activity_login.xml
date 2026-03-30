@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Stillness Mobile Login - Matches Web UI -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stillness_bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="40dp">
+
+        <!-- Logo -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-black"
+            android:text="@string/app_name"
+            android:textColor="@color/stillness_blue_primary"
+            android:textSize="28sp"
+            android:letterSpacing="-0.02" />
+
+        <!-- Login Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/bg_card"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_back"
+                android:textColor="@color/black"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:letterSpacing="-0.03" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/login_subtitle"
+                android:textColor="@color/text_secondary"
+                android:textSize="15sp" />
+
+            <!-- Error Banner -->
+            <TextView
+                android:id="@+id/tv_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_error"
+                android:padding="12dp"
+                android:textColor="@color/red_error_text"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <!-- Email Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/email"
+                android:textColor="@color/text_label"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_edittext"
+                android:hint="you@example.com"
+                android:inputType="textEmailAddress"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/text_hint"
+                android:textSize="15sp" />
+
+            <!-- Password Field -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/password"
+                android:textColor="@color/text_label"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="6dp">
+
+                <EditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_edittext"
+                    android:hint="••••••••"
+                    android:inputType="textPassword"
+                    android:paddingHorizontal="16dp"
+                    android:paddingEnd="48dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/text_hint"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/iv_toggle_password"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="Toggle password"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_eye_closed" />
+            </FrameLayout>
+
+            <!-- Login Button -->
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="28dp"
+                android:background="@drawable/bg_button_primary"
+                android:text="@string/login"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/border_divider" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:text="Or continue with"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/border_divider" />
+            </LinearLayout>
+
+            <!-- Google Login Button -->
+            <LinearLayout
+                android:id="@+id/btn_google_login"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_edittext"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="G"
+                    android:textColor="@color/stillness_blue_primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign in with Google"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progress_login"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:indeterminateTint="@color/stillness_blue_primary"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Footer -->
+        <TextView
+            android:id="@+id/tv_go_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/no_account"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</ScrollView>

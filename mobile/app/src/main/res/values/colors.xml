@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Stillness Web-Matched Palette -->
+    <color name="black">#FF111827</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Page Background: #EFF6FF -->
+    <color name="stillness_bg">#EFF6FF</color>
+
+    <!-- Branding Colors -->
+    <color name="stillness_blue_primary">#2563EB</color>
+    <color name="stillness_blue_hover">#1D4ED8</color>
+    <color name="stillness_blue_focus">#3B82F6</color>
+    <color name="stillness_blue_soft">#EFF6FF</color>
+
+    <!-- Text Colors -->
+    <color name="text_main">#111827</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="text_label">#374151</color>
+    <color name="text_hint">#9CA3AF</color>
+    <color name="text_slate_500">#64748B</color>
+
+    <!-- UI Elements -->
+    <color name="border_default">#D1D5DB</color>
+    <color name="border_divider">#E5E7EB</color>
+    <color name="surface_slate_50">#F8FAFC</color>
+
+    <!-- Grays -->
+    <color name="gray_50">#F9FAFB</color>
+    <color name="gray_400">#9CA3AF</color>
+    <color name="gray_700">#374151</color>
+    <color name="gray_800">#1F2937</color>
+
+    <!-- Alerts -->
+    <color name="red_error_bg">#FEF2F2</color>
+    <color name="red_error_text">#DC2626</color>
+    <color name="red_error_border">#FECACA</color>
+    <color name="green_success_bg">#F0FDF4</color>
+    <color name="green_success_text">#15803D</color>
+    <color name="green_success_border">#BBF7D0</color>
+
+    <!-- Role Cards -->
+    <color name="role_card_border_active">#3B82F6</color>
+    <color name="role_card_bg_active">#F0F7FF</color>
+
+    <!-- Branding Aliases -->
+    <color name="stillness_primary">#2563EB</color>
+    <color name="stillness_secondary">#1D4ED8</color>
+    <color name="stillness_navy">#1E3A5F</color>
+    <color name="stillness_steel">#EFF6FF</color>
+    <color name="stillness_card">#FFFFFF</color>
+    <color name="stillness_input">#B1BBC7</color>
+    <color name="stillness_input_hover">#94A3B8</color>
+    <color name="stillness_blue_600">#2563EB</color>
+
+    <!-- Compatibility Aliases for hg_ prefix -->
+    <color name="hg_navy">@color/stillness_navy</color>
+    <color name="hg_steel">#7C94B8</color>
+    <color name="hg_card">@color/stillness_card</color>
+    <color name="hg_input">@color/stillness_input</color>
+    <color name="hg_input_hover">@color/stillness_input_hover</color>
+    <color name="hg_blue_600">@color/stillness_blue_600</color>
+</resources>
