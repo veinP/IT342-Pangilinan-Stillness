@@ -1,0 +1,349 @@
+/* ============================================================
+   StillNess — Register Page  (pixel-matched to design image)
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Page ──────────────────────────────────────────────────── */
+.reg-page {
+  min-height: 100vh;
+  background: #EFF6FF;          /* same light blue as login */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* ── Logo ──────────────────────────────────────────────────── */
+.reg-logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2563EB;
+  letter-spacing: -0.3px;
+  text-decoration: none;
+  margin-bottom: 32px;
+  line-height: 1;
+}
+.reg-logo:hover { color: #1D4ED8; }
+
+/* ── Card ──────────────────────────────────────────────────── */
+.reg-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08), 0 1px 4px rgba(0,0,0,0.04);
+  width: 100%;
+  max-width: 480px;
+  padding: 44px 48px 48px;
+}
+
+/* ── Heading ───────────────────────────────────────────────── */
+.reg-card__title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.reg-card__sub {
+  font-size: 15px;
+  font-weight: 400;
+  color: #6B7280;
+  line-height: 1.5;
+  margin-bottom: 36px;
+}
+
+/* ── General error banner ──────────────────────────────────── */
+.reg-error-banner {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ── Fields ────────────────────────────────────────────────── */
+.reg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.reg-field__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  line-height: 1;
+}
+
+.reg-field__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.reg-role-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.reg-role-card {
+  position: relative;
+  display: flex;
+  min-height: 94px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color .18s, box-shadow .18s, transform .1s;
+}
+
+.reg-role-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.08);
+}
+
+.reg-role-card--active {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+.reg-role-card__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.reg-role-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reg-role-card__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.reg-role-card__copy {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #6b7280;
+}
+
+/* Base input — tall (52px), rounded-[10px], matches login page */
+.reg-field__input {
+  width: 100%;
+  height: 52px;
+  padding: 0 48px 0 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #111827;
+  background: #FFFFFF;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+/* Plain inputs (no eye icon) keep same padding */
+.reg-field__input--plain {
+  padding-right: 16px;
+}
+
+.reg-field__input::placeholder { color: #9CA3AF; }
+
+.reg-field__input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.reg-field__input--error {
+  border-color: #EF4444;
+  box-shadow: none;
+}
+.reg-field__input--error:focus {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+/* Eye button */
+.reg-field__eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6B7280;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .15s;
+}
+.reg-field__eye:hover { color: #374151; }
+
+/* Hint + error text */
+.reg-field__hint {
+  font-size: 13px;
+  color: #9CA3AF;
+  line-height: 1.4;
+}
+.reg-field__error-msg {
+  font-size: 13px;
+  color: #EF4444;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ── Password Strength Meter ──────────────────────────────── */
+.reg-strength-meter {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.reg-strength-meter__bar-wrapper {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.reg-strength-meter__bar {
+  height: 100%;
+  width: 0%;
+  transition: width .3s ease, background-color .3s ease;
+  border-radius: 3px;
+}
+
+/* ── Create Account button ─────────────────────────────────── */
+.reg-submit {
+  width: 100%;
+  height: 54px;
+  margin-top: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: #3B82F6;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.01em;
+  transition: background .15s, transform .1s, box-shadow .15s;
+  margin-bottom: 24px;
+}
+.reg-submit:hover:not(:disabled) {
+  background: #2563EB;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, .28);
+  transform: translateY(-1px);
+}
+.reg-submit:active { transform: translateY(0); }
+.reg-submit:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+
+/* ── Spinner ───────────────────────────────────────────────── */
+.reg-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255,255,255,.35);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: reg-spin .7s linear infinite;
+  display: inline-block;
+}
+@keyframes reg-spin { to { transform: rotate(360deg); } }
+
+/* ── Divider ───────────────────────────────────────────────── */
+.reg-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.reg-divider__line {
+  flex: 1;
+  height: 1px;
+  background: #E5E7EB;
+}
+.reg-divider__text {
+  font-size: 13px;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+/* ── Google button ─────────────────────────────────────────── */
+.reg-google {
+  width: 100%;
+  height: 54px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.reg-google:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+
+/* ── Footer prompt ─────────────────────────────────────────── */
+.reg-footer {
+  margin-top: 32px;
+  font-size: 14px;
+  color: #6B7280;
+  text-align: center;
+}
+.reg-footer a {
+  font-weight: 600;
+  color: #3B82F6;
+  text-decoration: none;
+  margin-left: 4px;
+  transition: color .15s;
+}
+.reg-footer a:hover { color: #1D4ED8; text-decoration: underline; }
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reg-logo   { animation: fadeUp .4s ease both; }
+.reg-card   { animation: fadeUp .4s .1s ease both; }
+.reg-footer { animation: fadeUp .4s .2s ease both; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .reg-card  { padding: 32px 24px 36px; border-radius: 16px; }
+  .reg-card__title { font-size: 26px; }
+  .reg-role-grid { grid-template-columns: 1fr; }
+}

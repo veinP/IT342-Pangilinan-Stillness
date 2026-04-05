@@ -2,15 +2,19 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import type { ReactNode } from 'react';
 
-export default function GuestRoute({ children }: { children: ReactNode }) {
+export default function AdminRoute({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
 
   if (loading) {
     return <div className="auth-container"><p>Loading...</p></div>;
   }
 
-  if (user) {
-    return <Navigate to={user.role === 'ROLE_INSTRUCTOR' ? '/admin/sessions' : '/'} replace />;
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.role !== 'ROLE_INSTRUCTOR') {
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;

@@ -4,8 +4,8 @@ import { authApi, type UserDto, type LoginRequest, type RegisterRequest } from '
 interface AuthContextType {
   user: UserDto | null;
   loading: boolean;
-  login: (data: LoginRequest) => Promise<void>;
-  register: (data: RegisterRequest) => Promise<void>;
+  login: (data: LoginRequest) => Promise<UserDto>;
+  register: (data: RegisterRequest) => Promise<UserDto>;
   logout: () => Promise<void>;
 }
 
@@ -36,28 +36,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (data: LoginRequest) => {
-    const res = await authApi.login(data);
-    if (res.data.success && res.data.data) {
-      const { user, token, refreshToken } = res.data.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
-    } else {
-      throw new Error(res.data.error?.message || 'Login failed');
+    try {
+      const res = await authApi.login(data);
+      if (res.data.success && res.data.data) {
+        const { user, token, refreshToken } = res.data.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user);
+        return user;
+      } else {
+        throw new Error(res.data.error?.message || 'Login failed');
+      }
+    } catch (error: any) {
+      // If it's an axios error, try to extract the API error message
+      if (error?.response?.data?.error?.message) {
+        throw new Error(error.response.data.error.message);
+      }
+      // Otherwise re-throw the original error
+      throw error;
     }
   };
 
   const register = async (data: RegisterRequest) => {
-    const res = await authApi.register(data);
-    if (res.data.success && res.data.data) {
-      const { user, token, refreshToken } = res.data.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
-    } else {
-      throw new Error(res.data.error?.message || 'Registration failed');
+    try {
+      const res = await authApi.register(data);
+      if (res.data.success && res.data.data) {
+        const { user, token, refreshToken } = res.data.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user);
+        return user;
+      } else {
+        throw new Error(res.data.error?.message || 'Registration failed');
+      }
+    } catch (error: any) {
+      // If it's an axios error, try to extract the API error message
+      if (error?.response?.data?.error?.message) {
+        throw new Error(error.response.data.error.message);
+      }
+      // Otherwise re-throw the original error
+      throw error;
     }
   };
 
