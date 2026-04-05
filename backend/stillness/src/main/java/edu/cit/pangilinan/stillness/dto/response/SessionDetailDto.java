@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SessionDto {
+public class SessionDetailDto {
     private UUID id;
     private String title;
     private String description;
@@ -20,11 +20,13 @@ public class SessionDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer capacity;
+    private Integer bookedCount;
     private BigDecimal price;
     private String thumbnailUrl;
     private String location;
     private String status;
     private LocalDateTime createdAt;
+    private boolean available;
 
     @Getter
     @Setter
