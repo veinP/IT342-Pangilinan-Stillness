@@ -39,6 +39,14 @@ class DashboardActivity : Activity() {
         val navLogout = findViewById<TextView>(R.id.nav_logout)
 
         navLogout.setOnClickListener { showLogoutDialog() }
+        
+        findViewById<Button>(R.id.btnNavSessions).setOnClickListener {
+            startActivity(Intent(this, SessionsActivity::class.java))
+        }
+
+        findViewById<Button>(R.id.btnNavBookings).setOnClickListener {
+            startActivity(Intent(this, MyBookingsActivity::class.java))
+        }
 
         // Load profile data
         loadProfile(

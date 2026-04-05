@@ -16,7 +16,7 @@ class SplashActivity : Activity() {
             if (SessionManager.isLoggedIn(this)) {
                 startActivity(Intent(this, DashboardActivity::class.java))
             } else {
-                startActivity(Intent(this, LoginActivity::class.java))
+                startActivity(Intent(this, LandingActivity::class.java))
             }
             finish()
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
