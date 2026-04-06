@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:stillness_test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-client-id
+            client-secret: test-client-secret
+            scope: email, profile
+
+app:
+  jwt:
+    secret: test-secret-key-for-jwt-signing-at-least-32-bytes
+    expiration: 3600000
+    refresh-expiration: 604800000
+  frontend-url: http://localhost:3000
+  file:
+    upload-dir: uploads-test

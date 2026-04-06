@@ -20,7 +20,6 @@ public class CreateSessionRequest {
 
     private String description;
 
-    @NotNull(message = "Instructor ID is required")
     private UUID instructorId;
 
     private String sessionType;

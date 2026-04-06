@@ -31,6 +31,8 @@
         <activity android:name=".RegisterActivity" android:exported="false"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".DashboardActivity" android:exported="false" />
-    </application>
-
-</manifest>
+        <activity android:name=".SessionsActivity" android:exported="false" />
+        <activity android:name=".SessionDetailActivity" android:exported="false" />
+        <activity android:name=".MyBookingsActivity" android:exported="false" />
+        <activity android:name=".LandingActivity" android:exported="false" />
+    </application></manifest>

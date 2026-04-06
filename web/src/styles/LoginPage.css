@@ -1,0 +1,275 @@
+/* ================================================================
+   StillNess — Login Page
+   1:1 match with RegisterPage styles — same tokens, same sizing
+   ================================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Page ──────────────────────────────────────────────────── */
+.ln-page {
+  min-height: 100vh;
+  background: #EFF6FF;           /* identical to reg-page */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+/* ── Logo ──────────────────────────────────────────────────── */
+.ln-logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2563EB;
+  text-decoration: none;
+  letter-spacing: -0.3px;
+  margin-bottom: 32px;
+  line-height: 1;
+}
+.ln-logo:hover { color: #1D4ED8; }
+
+/* ── Card ──────────────────────────────────────────────────── */
+.ln-card {
+  background: #FFFFFF;
+  border-radius: 20px;                           /* same as reg-card */
+  box-shadow: 0 4px 24px rgba(37,99,235,.08),
+              0 1px 4px rgba(0,0,0,.04);
+  width: 100%;
+  max-width: 480px;                              /* same as reg-card */
+  padding: 44px 48px 48px;                       /* same as reg-card */
+}
+
+/* ── Heading ───────────────────────────────────────────────── */
+.ln-card__title {
+  font-size: 32px;                               /* same as reg */
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.ln-card__sub {
+  font-size: 15px;
+  font-weight: 400;
+  color: #6B7280;
+  line-height: 1.5;
+  margin-bottom: 36px;
+}
+
+/* ── Error banner ──────────────────────────────────────────── */
+.ln-error-banner {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ── Fields ────────────────────────────────────────────────── */
+.ln-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.ln-field__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  line-height: 1;
+}
+
+.ln-field__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Base input — 52px tall, same as register */
+.ln-field__input {
+  width: 100%;
+  height: 52px;
+  padding: 0 48px 0 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #111827;
+  background: #FFFFFF;
+  border: 1.5px solid #D1D5DB;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+/* No eye icon — plain right padding */
+.ln-field__input--plain {
+  padding-right: 16px;
+}
+
+.ln-field__input::placeholder { color: #9CA3AF; }
+
+.ln-field__input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.15);
+}
+
+.ln-field__input--error {
+  border-color: #EF4444;
+  box-shadow: none;
+}
+.ln-field__input--error:focus {
+  border-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+/* Error message text */
+.ln-field__error-msg {
+  font-size: 13px;
+  color: #EF4444;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Eye toggle */
+.ln-field__eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6B7280;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .15s;
+}
+.ln-field__eye:hover { color: #374151; }
+.ln-field__eye:disabled { cursor: not-allowed; opacity: 0.65; }
+
+/* ── Forgot password ───────────────────────────────────────── */
+.ln-forgot {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 28px;
+}
+.ln-forgot a {
+  font-size: 14px;
+  font-weight: 500;
+  color: #3B82F6;
+  text-decoration: none;
+  transition: color .15s;
+}
+.ln-forgot a:hover { color: #1D4ED8; text-decoration: underline; }
+
+/* ── Login / submit button — identical to reg-submit ────────── */
+.ln-btn-submit {
+  width: 100%;
+  height: 54px;                                  /* same as reg-submit */
+  margin-bottom: 24px;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: #3B82F6;
+  border: none;
+  border-radius: 12px;                           /* same as reg-submit */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: .01em;
+  transition: background .15s, transform .1s, box-shadow .15s;
+}
+.ln-btn-submit:hover:not(:disabled) {
+  background: #2563EB;
+  box-shadow: 0 4px 16px rgba(37,99,235,.28);
+  transform: translateY(-1px);
+}
+.ln-btn-submit:active { transform: translateY(0); }
+.ln-btn-submit:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+
+/* ── Divider ───────────────────────────────────────────────── */
+.ln-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.ln-divider__line {
+  flex: 1;
+  height: 1px;
+  background: #E5E7EB;
+}
+.ln-divider__text {
+  font-size: 13px;
+  color: #9CA3AF;
+  white-space: nowrap;
+}
+
+/* ── Google button — identical to reg-google ────────────────── */
+.ln-btn-google {
+  width: 100%;
+  height: 54px;                                  /* same as reg-google */
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  background: #FFFFFF;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;                           /* same as reg-google */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.ln-btn-google:hover {
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+
+/* ── Footer prompt — identical to reg-footer ───────────────── */
+.ln-footer {
+  margin-top: 32px;
+  font-size: 14px;
+  color: #6B7280;
+  text-align: center;
+}
+.ln-footer a {
+  font-weight: 600;
+  color: #3B82F6;
+  text-decoration: none;
+  margin-left: 4px;
+  transition: color .15s;
+}
+.ln-footer a:hover { color: #1D4ED8; text-decoration: underline; }
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.ln-logo    { animation: fadeUp .4s ease both; }
+.ln-card    { animation: fadeUp .4s .1s ease both; }
+.ln-footer  { animation: fadeUp .4s .2s ease both; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .ln-card       { padding: 32px 24px 36px; border-radius: 16px; }
+  .ln-card__title { font-size: 26px; }
+}

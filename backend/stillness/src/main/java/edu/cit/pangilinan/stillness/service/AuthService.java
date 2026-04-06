@@ -5,8 +5,10 @@ import edu.cit.pangilinan.stillness.dto.request.RegisterRequest;
 import edu.cit.pangilinan.stillness.dto.response.AuthResponse;
 import edu.cit.pangilinan.stillness.dto.response.UserDto;
 import edu.cit.pangilinan.stillness.exception.StillnessException;
+import edu.cit.pangilinan.stillness.model.Instructor;
 import edu.cit.pangilinan.stillness.model.RefreshToken;
 import edu.cit.pangilinan.stillness.model.User;
+import edu.cit.pangilinan.stillness.repository.InstructorRepository;
 import edu.cit.pangilinan.stillness.repository.RefreshTokenRepository;
 import edu.cit.pangilinan.stillness.repository.UserRepository;
 import edu.cit.pangilinan.stillness.security.jwt.JwtProvider;
@@ -32,6 +34,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final InstructorRepository instructorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
@@ -47,15 +50,30 @@ public class AuthService {
             throw new StillnessException("DB-002", "Email already registered", HttpStatus.CONFLICT);
         }
 
+        String requestedRole = request.getRole() == null ? "ROLE_USER" : request.getRole().trim().toUpperCase();
+        if ("INSTRUCTOR".equals(requestedRole)) requestedRole = "ROLE_INSTRUCTOR";
+        if ("USER".equals(requestedRole)) requestedRole = "ROLE_USER";
+        if (!"ROLE_INSTRUCTOR".equals(requestedRole)) requestedRole = "ROLE_USER";
+
         User user = User.builder()
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .fullName(request.getFullName())
-                .role("ROLE_USER")
+                .role(requestedRole)
                 .emailVerified(false)
                 .build();
 
         user = userRepository.save(user);
+
+        if ("ROLE_INSTRUCTOR".equals(requestedRole)) {
+            instructorRepository.save(Instructor.builder()
+                .user(user)
+                .bio("")
+                .specialty("Wellness")
+                .profileImageUrl(null)
+                .yearsExperience(0)
+                .build());
+        }
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
@@ -90,7 +108,7 @@ public class AuthService {
         }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new StillnessException("AUTH-001", "Invalid credentials", HttpStatus.UNAUTHORIZED));
+            .orElseThrow(() -> new StillnessException("AUTH-001", "Invalid credentials", HttpStatus.UNAUTHORIZED));
 
         user.setLastLoginAt(LocalDateTime.now());
         userRepository.save(user);

@@ -15,8 +15,8 @@ public class SessionDto {
     private UUID id;
     private String title;
     private String description;
-    private UUID instructorId;
-    private String sessionType;
+    private InstructorDto instructor;
+    private String type;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer capacity;
@@ -25,4 +25,15 @@ public class SessionDto {
     private String location;
     private String status;
     private LocalDateTime createdAt;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class InstructorDto {
+        private UUID id;
+        private String fullName;
+        private String profileImageUrl;
+    }
 }

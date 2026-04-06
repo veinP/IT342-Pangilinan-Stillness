@@ -26,4 +26,8 @@ public class RegisterRequest {
 
     @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
+
+    @NotBlank(message = "Account type is required")
+    @Pattern(regexp = "^(ROLE_USER|ROLE_INSTRUCTOR)$", message = "Account type must be user or instructor")
+    private String role;
 }

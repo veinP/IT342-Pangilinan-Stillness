@@ -10,7 +10,7 @@ export default function GuestRoute({ children }: { children: ReactNode }) {
   }
 
   if (user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={user.role === 'ROLE_INSTRUCTOR' ? '/admin/sessions' : '/'} replace />;
   }
 
   return <>{children}</>;

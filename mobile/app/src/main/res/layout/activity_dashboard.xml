@@ -181,6 +181,19 @@
                 android:indeterminateTint="@color/stillness_blue_primary"
                 android:visibility="gone" />
 
+            <Button
+                android:id="@+id/btnNavSessions"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:text="Browse Sessions" />
+
+            <Button
+                android:id="@+id/btnNavBookings"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:text="My Bookings" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
