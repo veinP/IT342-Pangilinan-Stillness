@@ -5,6 +5,8 @@ import edu.cit.pangilinan.stillness.dto.response.ApiResponse;
 import edu.cit.pangilinan.stillness.dto.response.BookingDto;
 import edu.cit.pangilinan.stillness.service.BookingService;
 import jakarta.validation.Valid;
+import edu.cit.pangilinan.stillness.model.User;
+import edu.cit.pangilinan.stillness.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +25,25 @@ public class BookingController {
     @Autowired
     private BookingService bookingService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            return null;
+        }
+        return userRepository.findByEmail(auth.getName()).orElse(null);
+    }
+
     @PostMapping
     public ResponseEntity<?> createBooking(@Valid @RequestBody CreateBookingRequest request) {
         try {
-            // TODO: Get current user from Security Context
-            BookingDto booking = bookingService.createBooking(request, null);
+            User currentUser = getCurrentUser();
+            if (currentUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("UNAUTHORIZED", "User not found"));
+            }
+            BookingDto booking = bookingService.createBooking(request, currentUser);
             if (booking == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(ApiResponse.error("SESSION_NOT_FOUND", "Session not found"));
@@ -66,8 +82,11 @@ public class BookingController {
     @GetMapping("/me")
     public ResponseEntity<?> getMyBookings() {
         try {
-            // TODO: Get current user from Security Context
-            List<BookingDto> bookings = bookingService.getUserBookings(null);
+            User currentUser = getCurrentUser();
+            if (currentUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("UNAUTHORIZED", "User not found"));
+            }
+            List<BookingDto> bookings = bookingService.getUserBookings(currentUser);
             return ResponseEntity.ok(ApiResponse.builder()
                     .success(true)
                     .data(bookings)

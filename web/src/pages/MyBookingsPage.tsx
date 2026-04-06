@@ -41,6 +41,72 @@ function statusPill(status: string) {
   }
 }
 
+function paymentPill(status?: string) {
+  switch (status?.toUpperCase()) {
+    case 'PAID': return <span className="mb-pill-confirmed">Paid</span>;
+    case 'REFUNDED': return <span className="mb-pill-cancelled">Refunded</span>;
+    case 'FAILED': return <span className="mb-pill-cancelled">Failed</span>;
+    default: return <span className="mb-pill-pending">Pending</span>;
+  }
+}
+
+function formatMoney(amount?: number, sessionPrice?: number) {
+  const resolvedAmount = typeof amount === 'number' ? amount : sessionPrice;
+
+  if (typeof resolvedAmount !== 'number') {
+    return 'Included';
+  }
+
+  return resolvedAmount === 0 ? 'Free' : `$${resolvedAmount.toFixed(2)}`;
+}
+
+function BookingCard({ booking, featured = false, onCancel }: {
+  booking: Booking;
+  featured?: boolean;
+  onCancel?: (bookingId: string) => void;
+}) {
+  const s = booking.session;
+  const canCancel = booking.status === 'CONFIRMED' && isBookingCancellable(booking.cancellableUntil);
+  const isFreeBooking = (booking.amount ?? s.price ?? 0) === 0;
+
+  return (
+    <article className={`mb-card${featured ? ' mb-card--featured' : ''}`}>
+      <div className="mb-card__thumb">
+        <span>{featured ? 'Confirmed' : 'Session'}</span>
+      </div>
+
+      <div className="mb-card__content">
+        <div className="mb-card__title-row">
+          <h3 className="mb-card__title">{s.title}</h3>
+          <span className={`mb-badge ${getBadgeClass(s.type)}`}>{s.type}</span>
+          {isFreeBooking ? <span className="mb-badge mb-badge--free">Free Session</span> : null}
+        </div>
+
+        <div className="mb-card__meta-row">
+          <div className="mb-meta-item"><CalendarIcon /> {fmtDate(s.startTime)}</div>
+          <div className="mb-meta-item"><ClockIcon /> {fmtTimeRange(s.startTime, s.duration ?? 60)}</div>
+          <div className="mb-meta-item"><PinIcon /> {s.location ?? 'TBD'}</div>
+        </div>
+
+        <div className="mb-card__details">
+          <span><strong>Booking #:</strong> {booking.bookingNumber}</span>
+          <span><strong>Booked:</strong> {new Date(booking.bookedAt).toLocaleString()}</span>
+          <span><strong>Amount:</strong> {formatMoney(booking.amount, s.price)}</span>
+          <span><strong>Payment:</strong> {paymentPill(booking.paymentStatus)}</span>
+        </div>
+      </div>
+
+      <div className="mb-card__actions">
+        {statusPill(booking.status)}
+        <Link to={`/sessions/${s.id}`} className="mb-view-btn">View Details</Link>
+        {canCancel && onCancel ? (
+          <button className="mb-cancel-btn" onClick={() => onCancel(booking.id)}>Cancel Booking</button>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
 export default function MyBookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [tab, setTab] = useState<BookingTab>('upcoming');
@@ -49,7 +115,14 @@ export default function MyBookingsPage() {
 
   useEffect(() => {
     setLoading(true);
-    stillnessApi.getMyBookings().then(data => setBookings(data)).finally(() => setLoading(false));
+    stillnessApi.getMyBookings()
+      .then(data => {
+        setBookings(data);
+      })
+      .catch(() => {
+        setBookings([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleCancelBooking = async (bookingId: string) => {
@@ -71,7 +144,11 @@ export default function MyBookingsPage() {
     });
   }, [bookings, tab]);
 
-  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const featuredBooking = bookings[0] ?? null;
+  const listBookings = featuredBooking
+    ? filtered.filter((booking) => booking.id !== featuredBooking.id)
+    : filtered;
+  const paginated = listBookings.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <div className="mb-page">
@@ -94,38 +171,28 @@ export default function MyBookingsPage() {
         </div>
       </div>
 
+      {!loading && featuredBooking ? (
+        <div className="mb-featured">
+          <div className="mb-featured__header">
+            <h2>Your latest confirmed booking</h2>
+            <p>Use this card to verify the session details you just reserved.</p>
+          </div>
+          <BookingCard booking={featuredBooking} featured onCancel={handleCancelBooking} />
+        </div>
+      ) : null}
+
       <div className="mb-list">
-        {!loading && paginated.map(booking => {
-          const s = booking.session;
-          const canCancel = booking.status === 'CONFIRMED' && isBookingCancellable(booking.cancellableUntil);
+        {!loading && paginated.map((booking) => (
+          <BookingCard key={booking.id} booking={booking} onCancel={handleCancelBooking} />
+        ))}
 
-          return (
-            <article key={booking.id} className="mb-card">
-              <div className="mb-card__thumb">Session</div>
-              
-              <div className="mb-card__content">
-                <div className="mb-card__title-row">
-                  <h3 className="mb-card__title">{s.title}</h3>
-                  <span className={`mb-badge ${getBadgeClass(s.type)}`}>{s.type}</span>
-                </div>
-                
-                <div className="mb-card__meta-row">
-                  <div className="mb-meta-item"><CalendarIcon /> {fmtDate(s.startTime)}</div>
-                  <div className="mb-meta-item"><ClockIcon /> {fmtTimeRange(s.startTime, s.duration ?? 60)}</div>
-                  <div className="mb-meta-item"><PinIcon /> {s.location ?? 'TBD'}</div>
-                </div>
-              </div>
-
-              <div className="mb-card__actions">
-                {statusPill(booking.status)}
-                <Link to={`/sessions/${s.id}`} className="mb-view-btn">View Details</Link>
-                {canCancel && (
-                  <button className="mb-cancel-btn" onClick={() => handleCancelBooking(booking.id)}>Cancel Booking</button>
-                )}
-              </div>
-            </article>
-          );
-        })}
+        {!loading && paginated.length === 0 && !featuredBooking ? (
+          <div className="mb-empty-state">
+            <h3>No bookings found for this tab.</h3>
+            <p>Once you confirm a session, the booking card will appear here with the session, payment, and booking details.</p>
+            <Link to="/sessions" className="mb-view-btn">Browse Sessions</Link>
+          </div>
+        ) : null}
       </div>
     </div>
   );

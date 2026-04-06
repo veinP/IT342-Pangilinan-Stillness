@@ -6,6 +6,7 @@ import edu.cit.pangilinan.stillness.model.Payment;
 import edu.cit.pangilinan.stillness.model.User;
 import edu.cit.pangilinan.stillness.repository.BookingRepository;
 import edu.cit.pangilinan.stillness.repository.PaymentRepository;
+import edu.cit.pangilinan.stillness.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,17 @@ public class PaymentService {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User resolveCurrentUser(User user) {
+        if (user != null && user.getId() != null) {
+            return user;
+        }
+
+        return null;
+    }
 
     public PaymentDto createPayment(UUID bookingId, User user, BigDecimal amount, String paymentIntentId) {
         Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
@@ -75,7 +87,18 @@ public class PaymentService {
     }
 
     public List<PaymentDto> getUserPayments(User user) {
-        return paymentRepository.findByUser(user).stream()
+        User resolvedUser = resolveCurrentUser(user);
+        if (resolvedUser == null) {
+            return List.of();
+        }
+
+        return paymentRepository.findByUser(resolvedUser).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PaymentDto> getAllPayments() {
+        return paymentRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }

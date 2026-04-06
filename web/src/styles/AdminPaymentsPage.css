@@ -44,6 +44,7 @@
   white-space: nowrap;
   flex-shrink: 0;
   margin-top: 0.25rem;
+  align-self: flex-start;
 }
 
 .btn-lg {
@@ -54,9 +55,9 @@
 /* Summary Cards Grid */
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.25rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .summary-card {
@@ -66,6 +67,10 @@
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
   transition: all 0.15s ease;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .summary-card:hover {
@@ -76,13 +81,13 @@
 
 .summary-card p {
   font-size: 0.9rem;
-  color: #64748b;
-  margin: 0 0 0.75rem 0;
+  color: #0369a1;
+  margin: 0 0 0.5rem 0;
   font-weight: 500;
 }
 
 .summary-card h3 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 700;
   color: #0284c7;
   margin: 0;
@@ -94,16 +99,16 @@
   background: #fff;
   border: 1px solid #d9e4f4;
   border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.04);
 }
 
 .filter-title {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #1e293b;
-  margin: 0 0 1.25rem 0;
+  margin: 0 0 0.9rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -111,18 +116,18 @@
 
 .filter-group {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 0.8rem;
+  grid-template-columns: minmax(0, 2fr) minmax(150px, 1fr) minmax(110px, 0.75fr);
+  gap: 0.65rem;
   align-items: center;
 }
 
 .search-input,
 .search-select {
-  min-height: 42px;
+  min-height: 38px;
   border: 1px solid #d9e4f4;
   border-radius: 8px;
-  padding: 0.65rem 0.9rem;
-  font-size: 0.95rem;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.9rem;
   transition: all 0.15s ease;
 }
 
@@ -136,23 +141,23 @@
 .filter-btn-clear,
 .ghost-btn,
 .export-btn {
-  min-height: 42px;
-  padding: 0.65rem 1.25rem;
+  min-height: 38px;
+  padding: 0.55rem 1rem;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.15s ease;
-  background: #f1f5f9;
+  background: #f8fafc;
   color: #475569;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d4dce6;
 }
 
 .filter-btn-clear:hover,
 .ghost-btn:hover,
 .export-btn:hover {
-  background: #e2e8f0;
-  border-color: #94a3b8;
+  background: #edf2f7;
+  border-color: #b6c3d4;
   transform: translateY(-1px);
 }
 
@@ -162,8 +167,8 @@
   border: 1px solid #d9e4f4;
   border-radius: 12px;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  margin-bottom: 2rem;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.04);
+  margin-bottom: 1.25rem;
 }
 
 .payments-table {
@@ -176,18 +181,20 @@
 }
 
 .payments-table th {
-  padding: 1rem 0.9rem;
+  padding: 0.8rem 0.8rem;
   text-align: left;
   font-weight: 600;
   color: #334155;
   border-bottom: 2px solid #e2e8f0;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   white-space: nowrap;
 }
 
 .payments-table td {
-  padding: 1rem 0.9rem;
+  padding: 0.8rem 0.8rem;
   border-bottom: 1px solid #e2e8f0;
+  font-size: 0.9rem;
+  color: #334155;
 }
 
 .payments-table tbody tr {
@@ -201,9 +208,9 @@
 /* Status Badge */
 .status-badge {
   display: inline-block;
-  padding: 0.35rem 0.75rem;
+  padding: 0.3rem 0.65rem;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -231,12 +238,12 @@
 /* Empty State */
 .empty-state {
   text-align: center;
-  padding: 3rem 2rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, #fbfdff 0%, #f1f5f9 100%);
   border: 2px dashed #cbd5e1;
   border-radius: 12px;
   color: #64748b;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .empty-state-icon {
@@ -288,7 +295,7 @@
 
 @media (max-width: 768px) {
   .payments-header {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   .payments-header-content {
@@ -297,7 +304,7 @@
   }
 
   .payments-header-text h1 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
   }
 
   .payments-header .export-btn {
@@ -321,6 +328,6 @@
 
   .payments-table th,
   .payments-table td {
-    padding: 0.75rem 0.6rem;
+    padding: 0.7rem 0.55rem;
   }
 }

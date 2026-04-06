@@ -3,14 +3,17 @@ package edu.cit.pangilinan.stillness.controller;
 import edu.cit.pangilinan.stillness.dto.request.PaymentConfirmRequest;
 import edu.cit.pangilinan.stillness.dto.response.ApiResponse;
 import edu.cit.pangilinan.stillness.dto.response.PaymentDto;
+import edu.cit.pangilinan.stillness.model.User;
+import edu.cit.pangilinan.stillness.repository.UserRepository;
 import edu.cit.pangilinan.stillness.service.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +26,17 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    private User getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getPrincipal().equals("anonymousUser")) {
+            return null;
+        }
+        return userRepository.findByEmail(auth.getName()).orElse(null);
+    }
 
     @PostMapping("/confirm")
     public ResponseEntity<?> confirmPayment(@Valid @RequestBody PaymentConfirmRequest request) {
@@ -72,8 +86,13 @@ public class PaymentController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getUserPayments(@PathVariable UUID userId) {
         try {
-            // TODO: Get current user from Security Context and verify it's the same user
-            List<PaymentDto> payments = paymentService.getUserPayments(null);
+            User currentUser = getCurrentUser();
+            if (currentUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("UNAUTHORIZED", "User not found"));
+            }
+
+            List<PaymentDto> payments = paymentService.getUserPayments(currentUser);
             return ResponseEntity.ok(ApiResponse.builder()
                     .success(true)
                     .data(payments)
