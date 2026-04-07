@@ -1,5 +1,6 @@
 package edu.cit.pangilinan.stillness.service;
 
+import com.stillness.notification.EmailNotificationFactory;
 import edu.cit.pangilinan.stillness.dto.request.CreateBookingRequest;
 import edu.cit.pangilinan.stillness.dto.response.BookingDto;
 import edu.cit.pangilinan.stillness.model.Booking;
@@ -37,6 +38,9 @@ public class BookingService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    @Autowired
+    private EmailNotificationFactory emailNotificationFactory;
 
     private User resolveCurrentUser(User user) {
         if (user != null && user.getId() != null) {
@@ -99,6 +103,14 @@ public class BookingService {
                 .build();
 
             paymentRepository.save(payment);
+
+            try {
+                emailNotificationFactory
+                        .createNotification("BOOKING_CONFIRMATION", resolvedUser.getEmail(), saved)
+                        .send();
+            } catch (Exception ignored) {
+                // Email failure should not break booking creation
+            }
 
             BookingDto dto = convertToDto(saved);
             dto.setAmount(amount);
