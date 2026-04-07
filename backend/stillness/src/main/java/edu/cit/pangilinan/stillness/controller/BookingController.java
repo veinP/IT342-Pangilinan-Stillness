@@ -7,6 +7,7 @@ import edu.cit.pangilinan.stillness.dto.response.BookingDto;
 import jakarta.validation.Valid;
 import edu.cit.pangilinan.stillness.model.User;
 import edu.cit.pangilinan.stillness.repository.UserRepository;
+import edu.cit.pangilinan.stillness.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,9 @@ public class BookingController {
 
     @Autowired
     private BookingFacade bookingFacade;
+
+    @Autowired
+    private BookingService bookingService;
 
     @Autowired
     private UserRepository userRepository;
@@ -56,25 +60,6 @@ public class BookingController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getBookingById(@PathVariable UUID id) {
-        try {
-            BookingDto booking = bookingService.getBookingById(id);
-            if (booking == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error("BOOKING_NOT_FOUND", "Booking not found"));
-            }
-            return ResponseEntity.ok(ApiResponse.builder()
-                    .success(true)
-                    .data(booking)
-                    .timestamp(LocalDateTime.now().toString())
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(ApiResponse.error("BOOKING_FETCH_FAILED", e.getMessage()));
-        }
-    }
-
     @GetMapping("/me")
     public ResponseEntity<?> getMyBookings() {
         try {
@@ -91,6 +76,25 @@ public class BookingController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error("BOOKINGS_FETCH_FAILED", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getBookingById(@PathVariable UUID id) {
+        try {
+            BookingDto booking = bookingService.getBookingById(id);
+            if (booking == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ApiResponse.error("BOOKING_NOT_FOUND", "Booking not found"));
+            }
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .data(booking)
+                    .timestamp(LocalDateTime.now().toString())
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("BOOKING_FETCH_FAILED", e.getMessage()));
         }
     }
 

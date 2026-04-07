@@ -12,7 +12,6 @@ import edu.cit.pangilinan.stillness.repository.InstructorRepository;
 import edu.cit.pangilinan.stillness.repository.RefreshTokenRepository;
 import edu.cit.pangilinan.stillness.repository.UserRepository;
 import edu.cit.pangilinan.stillness.security.jwt.JwtProvider;
-import com.stillness.notification.EmailNotificationFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +30,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("unchecked")
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -39,7 +39,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
-    private final EmailNotificationFactory emailNotificationFactory;
+    private final EmailService emailService;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -85,10 +85,9 @@ public class AuthService {
         String jwt = jwtProvider.generateToken(userDetails);
         String refreshToken = createRefreshToken(user);
 
+        // Send welcome email
         try {
-            emailNotificationFactory
-                    .createNotification("WELCOME", user.getEmail(), mapToUserDto(user))
-                    .send();
+            emailService.sendWelcomeEmail(user.getEmail(), user.getFullName());
         } catch (Exception ignored) {
             // Email failure should not prevent registration
         }

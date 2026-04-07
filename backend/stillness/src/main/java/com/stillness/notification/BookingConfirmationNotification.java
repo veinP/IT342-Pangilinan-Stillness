@@ -27,13 +27,16 @@ public class BookingConfirmationNotification implements EmailNotification {
 
     @Override
     public void send() {
-        String fullName = booking != null && booking.getUser() != null && booking.getUser().getFullName() != null
-                ? booking.getUser().getFullName()
-                : "there";
-        String sessionTitle = booking != null && booking.getSession() != null && booking.getSession().getTitle() != null
-                ? booking.getSession().getTitle()
-                : "your session";
-        emailService.sendBookingConfirmation(recipientEmail, fullName, sessionTitle);
+        if (booking == null || booking.getSession() == null || booking.getUser() == null) {
+            return;
+        }
+        emailService.sendBookingConfirmation(
+            recipientEmail, 
+            booking.getUser().getFullName(), 
+            booking.getSession().getTitle(),
+            booking.getSession().getStartTime(),
+            booking.getSession().getLocation()
+        );
     }
 
     @Override

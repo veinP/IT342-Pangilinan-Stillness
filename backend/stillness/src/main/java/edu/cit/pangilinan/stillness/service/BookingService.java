@@ -26,6 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("unchecked")
 public class BookingService {
 
     @Autowired
@@ -42,6 +43,9 @@ public class BookingService {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private EmailService emailService;
 
     private User resolveCurrentUser(User user) {
         if (user != null && user.getId() != null) {
@@ -107,6 +111,15 @@ public class BookingService {
 
             paymentRepository.save(payment);
 
+            // Send booking confirmation email
+            emailService.sendBookingConfirmation(
+                resolvedUser.getEmail(),
+                resolvedUser.getFullName(),
+                session.getTitle(),
+                session.getStartTime(),
+                session.getLocation()
+            );
+
             BookingDto dto = convertToDto(saved);
             dto.setAmount(amount);
             dto.setPaymentStatus(paymentStatus);
@@ -147,6 +160,16 @@ public class BookingService {
         booking.setCancelledAt(LocalDateTime.now());
 
         Booking updated = bookingRepository.save(booking);
+        
+        // Send cancellation confirmation email
+        if (booking.getUser() != null && booking.getSession() != null) {
+            emailService.sendCancellationConfirmation(
+                booking.getUser().getEmail(),
+                booking.getUser().getFullName(),
+                booking.getSession().getTitle()
+            );
+        }
+        
         return convertToDto(updated);
     }
 

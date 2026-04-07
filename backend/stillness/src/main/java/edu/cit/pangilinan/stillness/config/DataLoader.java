@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Component
+@SuppressWarnings("unchecked")
 public class DataLoader implements CommandLineRunner {
 
     @Autowired

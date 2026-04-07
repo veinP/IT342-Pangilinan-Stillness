@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@SuppressWarnings("unchecked")
 public class SessionService {
 
 	@Autowired
@@ -130,6 +131,9 @@ public class SessionService {
 					.build();
 		}
 
+		long bookedCount = bookingRepository.countBySessionAndStatus(session, "CONFIRMED");
+		int limitedBookedCount = (int) Math.min(bookedCount, session.getCapacity());
+
 		return SessionDto.builder()
 				.id(session.getId())
 				.title(session.getTitle())
@@ -139,6 +143,7 @@ public class SessionService {
 				.startTime(session.getStartTime())
 				.endTime(session.getEndTime())
 				.capacity(session.getCapacity())
+				.bookedCount(limitedBookedCount)
 				.price(session.getPrice())
 				.thumbnailUrl(session.getThumbnailUrl())
 				.location(session.getLocation())

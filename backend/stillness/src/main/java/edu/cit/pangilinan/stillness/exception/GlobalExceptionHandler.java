@@ -17,6 +17,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(StillnessException.class)
+    @SuppressWarnings("unchecked")
     public ResponseEntity<ApiResponse<Void>> handleStillnessException(StillnessException ex) {
         return ResponseEntity
                 .status(ex.getHttpStatus())

@@ -42,7 +42,7 @@ public class BookingFacade {
 
         BigDecimal amount = session.getPrice() != null ? session.getPrice() : BigDecimal.ZERO;
         String paymentMethodId = amount.compareTo(BigDecimal.ZERO) == 0 ? "FREE" : "SANDBOX_CARD";
-        PaymentResult paymentResult = paymentContext.executePayment(currentUser.getId(), amount, paymentMethodId);
+        PaymentResult paymentResult = paymentContext.executePayment(currentUser.getId().getMostSignificantBits(), amount, paymentMethodId);
         if (!paymentResult.isSuccessful()) {
             throw new IllegalStateException("Payment could not be completed");
         }

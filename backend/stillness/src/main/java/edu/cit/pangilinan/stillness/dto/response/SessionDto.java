@@ -20,6 +20,7 @@ public class SessionDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer capacity;
+    private Integer bookedCount;
     private BigDecimal price;
     private String thumbnailUrl;
     private String location;

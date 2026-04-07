@@ -6,7 +6,6 @@ import edu.cit.pangilinan.stillness.model.Payment;
 import edu.cit.pangilinan.stillness.model.User;
 import edu.cit.pangilinan.stillness.repository.BookingRepository;
 import edu.cit.pangilinan.stillness.repository.PaymentRepository;
-import edu.cit.pangilinan.stillness.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("unchecked")
 public class PaymentService {
 
     @Autowired
@@ -25,9 +25,6 @@ public class PaymentService {
 
     @Autowired
     private BookingRepository bookingRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     private User resolveCurrentUser(User user) {
         if (user != null && user.getId() != null) {

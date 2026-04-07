@@ -11,7 +11,7 @@ public class AppConfig {
 
     private final String stripeApiKey;
 
-    public AppConfig(@Value("${stripe.api.key}") String stripeApiKey) {
+    public AppConfig(@Value("${stripe.api.key:}") String stripeApiKey) {
         this.stripeApiKey = stripeApiKey;
     }
 
@@ -23,6 +23,6 @@ public class AppConfig {
     @Bean
     public Stripe stripeInitializer() {
         Stripe.apiKey = stripeApiKey;
-        return new Stripe();
+        return new Stripe() {};
     }
 }
