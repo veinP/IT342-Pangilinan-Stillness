@@ -1,7 +1,7 @@
 package edu.cit.pangilinan.stillness.controller;
 
 import edu.cit.pangilinan.stillness.dto.response.ApiResponse;
-import edu.cit.pangilinan.stillness.dto.response.PaymentDto;
+import edu.cit.pangilinan.stillness.dto.response.PaymentRecordDto;
 import edu.cit.pangilinan.stillness.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class AdminPaymentsController {
 
     @GetMapping
     public ResponseEntity<?> getAdminPayments() {
-        List<PaymentDto> records = paymentService.getAllPayments();
+        List<PaymentRecordDto> records = paymentService.getAllPaymentsAsRecords();
 
         BigDecimal totalRevenue = records.stream()
                 .filter((payment) -> "PAID".equalsIgnoreCase(payment.getStatus()))

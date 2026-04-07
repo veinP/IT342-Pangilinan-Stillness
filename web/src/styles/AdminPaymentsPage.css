@@ -114,51 +114,114 @@
   gap: 0.5rem;
 }
 
-.filter-group {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(150px, 1fr) minmax(110px, 0.75fr);
-  gap: 0.65rem;
+/* Filters Section */
+.payments-filters {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.filter-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0 0 0.75rem 0;
+  display: flex;
   align-items: center;
+  gap: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.search-input,
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  background: #fff;
+  color: #334155;
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: #fff;
+}
+
 .search-select {
-  min-height: 38px;
-  border: 1px solid #d9e4f4;
-  border-radius: 8px;
-  padding: 0.55rem 0.8rem;
-  font-size: 0.9rem;
-  transition: all 0.15s ease;
+  flex: 0 0 144px;
+  height: 36px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 0.5rem 0.5rem 0.5rem 0.6rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  background: #fff;
+  color: #334155;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.35rem center;
+  background-size: 1em 1em;
+  padding-right: 1.8rem;
 }
 
-.search-input:focus,
 .search-select:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #fff;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.35rem center;
+  background-size: 1em 1em;
 }
 
 .filter-btn-clear,
 .ghost-btn,
 .export-btn {
-  min-height: 38px;
-  padding: 0.55rem 1rem;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  background: #f8fafc;
+  flex: 0 0 auto;
+  height: 36px;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
   color: #475569;
-  border: 1px solid #d4dce6;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  margin-left: auto;
 }
 
 .filter-btn-clear:hover,
 .ghost-btn:hover,
 .export-btn:hover {
-  background: #edf2f7;
-  border-color: #b6c3d4;
-  transform: translateY(-1px);
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
 }
 
 /* Table Styling */
@@ -289,7 +352,11 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .filter-group {
-    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .search-select {
+    flex: 0 0 130px;
   }
 }
 
@@ -307,6 +374,32 @@
     font-size: 1.35rem;
   }
 
+  .payments-filters {
+    padding: 0.8rem;
+  }
+
+  .filter-group {
+    gap: 0.5rem;
+  }
+
+  .search-input,
+  .search-select {
+    height: 34px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .search-select {
+    flex: 0 0 120px;
+  }
+
+  .filter-btn-clear,
+  .ghost-btn {
+    height: 34px;
+    padding: 0.35rem 0.55rem;
+    font-size: 0.75rem;
+  }
+
   .payments-header .export-btn {
     width: 100%;
     margin-top: 1rem;
@@ -319,7 +412,25 @@
   }
 
   .filter-group {
-    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+
+  .search-input,
+  .search-select {
+    height: 32px;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .search-select {
+    flex: 0 0 auto;
+    min-width: 110px;
+  }
+
+  .filter-btn-clear {
+    height: 32px;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
   }
 
   .payments-table {
