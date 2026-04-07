@@ -147,7 +147,7 @@ export default function BookingCheckoutPage() {
       const booking = await stillnessApi.createBooking(session.id);
 
       if (booking.paymentStatus === 'PENDING' && booking.amount > 0) {
-        await stillnessApi.confirmPayment(buildPaymentIntentId(), booking.id);
+        await stillnessApi.confirmPayment(booking.paymentIntentId ?? buildPaymentIntentId(), booking.id);
       }
 
       setConfirmationMessage(`Booking confirmed for ${session.title}.`);

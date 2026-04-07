@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@SuppressWarnings("unchecked")
 public class SessionService {
 
 	@Autowired
@@ -104,6 +105,21 @@ public class SessionService {
 		return true;
 	}
 
+	@Transactional
+	public void validateCapacity(UUID sessionId) {
+		Optional<Session> sessionOpt = sessionRepository.findById(sessionId);
+		if (sessionOpt.isEmpty()) {
+			throw new IllegalStateException("Session not found");
+		}
+
+		Session session = sessionOpt.get();
+		int capacity = session.getCapacity() != null ? session.getCapacity() : 0;
+		long bookedCount = bookingRepository.countBySessionAndStatus(session, "CONFIRMED");
+		if (bookedCount >= capacity) {
+			throw new IllegalStateException("Session is fully booked");
+		}
+	}
+
 	private SessionDto convertToDto(Session session) {
 		SessionDto.InstructorDto instructorDto = null;
 		if (session.getInstructor() != null && session.getInstructor().getUser() != null) {
@@ -115,6 +131,9 @@ public class SessionService {
 					.build();
 		}
 
+		long bookedCount = bookingRepository.countBySessionAndStatus(session, "CONFIRMED");
+		int limitedBookedCount = (int) Math.min(bookedCount, session.getCapacity());
+
 		return SessionDto.builder()
 				.id(session.getId())
 				.title(session.getTitle())
@@ -124,6 +143,7 @@ public class SessionService {
 				.startTime(session.getStartTime())
 				.endTime(session.getEndTime())
 				.capacity(session.getCapacity())
+				.bookedCount(limitedBookedCount)
 				.price(session.getPrice())
 				.thumbnailUrl(session.getThumbnailUrl())
 				.location(session.getLocation())

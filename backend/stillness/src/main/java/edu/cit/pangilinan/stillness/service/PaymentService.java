@@ -17,6 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("unchecked")
 public class PaymentService {
 
     @Autowired
@@ -24,6 +25,14 @@ public class PaymentService {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    private User resolveCurrentUser(User user) {
+        if (user != null && user.getId() != null) {
+            return user;
+        }
+
+        return null;
+    }
 
     public PaymentDto createPayment(UUID bookingId, User user, BigDecimal amount, String paymentIntentId) {
         Optional<Booking> bookingOpt = bookingRepository.findById(bookingId);
@@ -75,7 +84,18 @@ public class PaymentService {
     }
 
     public List<PaymentDto> getUserPayments(User user) {
-        return paymentRepository.findByUser(user).stream()
+        User resolvedUser = resolveCurrentUser(user);
+        if (resolvedUser == null) {
+            return List.of();
+        }
+
+        return paymentRepository.findByUser(resolvedUser).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<PaymentDto> getAllPayments() {
+        return paymentRepository.findAll().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }

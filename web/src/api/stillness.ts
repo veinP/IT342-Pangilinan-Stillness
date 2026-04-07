@@ -50,6 +50,7 @@ export interface Booking {
   amount: number;
   bookedAt: string;
   cancellableUntil?: string | null;
+  paymentIntentId?: string | null;
 }
 
 export interface PaymentSummary {
@@ -81,7 +82,7 @@ export interface SessionFilters {
 export interface CreateSessionPayload {
   title: string;
   description?: string;
-  sessionType: string;
+  paymentIntentId?: string | null;
   startTime: string;
   endTime: string;
   capacity: number;
@@ -440,21 +441,12 @@ export const stillnessApi = {
           amount: payload.amount ?? 0,
           bookedAt: payload.bookedAt ?? new Date().toISOString(),
           cancellableUntil: payload.cancellableUntil ?? null,
+          paymentIntentId: payload.paymentIntentId ?? null,
         };
       }
       throw new Error('Invalid booking payload');
-    } catch {
-      const session = fallbackSessions.find((entry) => entry.id === sessionId) ?? fallbackSessions[0];
-      return {
-        id: crypto.randomUUID(),
-        bookingNumber: `STN-${new Date().getFullYear()}-${Math.floor(Math.random() * 9000 + 1000)}`,
-        session,
-        status: 'CONFIRMED',
-        paymentStatus: session.price > 0 ? 'PENDING' : 'PAID',
-        amount: session.price,
-        bookedAt: new Date().toISOString(),
-        cancellableUntil: new Date(new Date(session.startTime).getTime() - 1000 * 60 * 60 * 2).toISOString(),
-      };
+    } catch (err: unknown) {
+      throw new Error(formatApiError(err, 'Unable to complete booking.'));
     }
   },
 

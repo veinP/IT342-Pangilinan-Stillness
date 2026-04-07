@@ -30,6 +30,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("unchecked")
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -84,6 +85,7 @@ public class AuthService {
         String jwt = jwtProvider.generateToken(userDetails);
         String refreshToken = createRefreshToken(user);
 
+        // Send welcome email
         try {
             emailService.sendWelcomeEmail(user.getEmail(), user.getFullName());
         } catch (Exception ignored) {
