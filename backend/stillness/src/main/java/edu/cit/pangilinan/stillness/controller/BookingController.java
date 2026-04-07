@@ -1,9 +1,9 @@
 package edu.cit.pangilinan.stillness.controller;
 
+import com.stillness.facade.BookingFacade;
 import edu.cit.pangilinan.stillness.dto.request.CreateBookingRequest;
 import edu.cit.pangilinan.stillness.dto.response.ApiResponse;
 import edu.cit.pangilinan.stillness.dto.response.BookingDto;
-import edu.cit.pangilinan.stillness.service.BookingService;
 import jakarta.validation.Valid;
 import edu.cit.pangilinan.stillness.model.User;
 import edu.cit.pangilinan.stillness.repository.UserRepository;
@@ -23,7 +23,7 @@ import java.util.UUID;
 public class BookingController {
 
     @Autowired
-    private BookingService bookingService;
+    private BookingFacade bookingFacade;
 
     @Autowired
     private UserRepository userRepository;
@@ -43,11 +43,7 @@ public class BookingController {
             if (currentUser == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("UNAUTHORIZED", "User not found"));
             }
-            BookingDto booking = bookingService.createBooking(request, currentUser);
-            if (booking == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error("SESSION_NOT_FOUND", "Session not found"));
-            }
+            BookingDto booking = bookingFacade.completeBooking(currentUser, request);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.builder()
                             .success(true)

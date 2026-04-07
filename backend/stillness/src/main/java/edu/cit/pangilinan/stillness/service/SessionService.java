@@ -104,6 +104,21 @@ public class SessionService {
 		return true;
 	}
 
+	@Transactional
+	public void validateCapacity(UUID sessionId) {
+		Optional<Session> sessionOpt = sessionRepository.findById(sessionId);
+		if (sessionOpt.isEmpty()) {
+			throw new IllegalStateException("Session not found");
+		}
+
+		Session session = sessionOpt.get();
+		int capacity = session.getCapacity() != null ? session.getCapacity() : 0;
+		long bookedCount = bookingRepository.countBySessionAndStatus(session, "CONFIRMED");
+		if (bookedCount >= capacity) {
+			throw new IllegalStateException("Session is fully booked");
+		}
+	}
+
 	private SessionDto convertToDto(Session session) {
 		SessionDto.InstructorDto instructorDto = null;
 		if (session.getInstructor() != null && session.getInstructor().getUser() != null) {
