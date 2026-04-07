@@ -1,8 +1,10 @@
 package edu.cit.pangilinan.stillness.service;
 
 import edu.cit.pangilinan.stillness.dto.response.PaymentDto;
+import edu.cit.pangilinan.stillness.dto.response.PaymentRecordDto;
 import edu.cit.pangilinan.stillness.model.Booking;
 import edu.cit.pangilinan.stillness.model.Payment;
+import edu.cit.pangilinan.stillness.model.Session;
 import edu.cit.pangilinan.stillness.model.User;
 import edu.cit.pangilinan.stillness.repository.BookingRepository;
 import edu.cit.pangilinan.stillness.repository.PaymentRepository;
@@ -130,5 +132,45 @@ public class PaymentService {
                 .refundDate(payment.getRefundDate())
                 .refundReason(payment.getRefundReason())
                 .build();
+    }
+
+    public List<PaymentRecordDto> getAllPaymentsAsRecords() {
+        return paymentRepository.findAllWithDetails().stream()
+                .map(this::convertToRecordDto)
+                .collect(Collectors.toList());
+    }
+
+    private PaymentRecordDto convertToRecordDto(Payment payment) {
+        Booking booking = payment.getBooking();
+        User user = payment.getUser();
+        Session session = booking != null ? booking.getSession() : null;
+
+        String bookingNumber = booking != null ? "BK-" + booking.getId().toString().substring(0, 8).toUpperCase() : "N/A";
+        String userName = user != null ? user.getFullName() : "Unknown User";
+        String sessionTitle = session != null ? session.getTitle() : "Unknown Session";
+        String cardMasked = payment.getPaymentMethod() != null ? maskCardNumber(payment.getPaymentMethod()) : "N/A";
+
+        return PaymentRecordDto.builder()
+                .id(payment.getId())
+                .bookingNumber(bookingNumber)
+                .userName(userName)
+                .sessionTitle(sessionTitle)
+                .amount(payment.getAmount())
+                .currency(payment.getCurrency())
+                .paymentMethod(payment.getPaymentMethod())
+                .cardMasked(cardMasked)
+                .transactionId(payment.getTransactionId() != null ? payment.getTransactionId() : "PENDING")
+                .status(payment.getStatus())
+                .date(payment.getPaymentDate())
+                .refundDate(payment.getRefundDate())
+                .refundReason(payment.getRefundReason())
+                .build();
+    }
+
+    private String maskCardNumber(String cardNumber) {
+        if (cardNumber == null || cardNumber.length() < 4) {
+            return "****";
+        }
+        return "****-****-****-" + cardNumber.substring(cardNumber.length() - 4);
     }
 }

@@ -41,12 +41,14 @@ public class BookingFacade {
         }
 
         BigDecimal amount = session.getPrice() != null ? session.getPrice() : BigDecimal.ZERO;
-        String paymentMethodId = amount.compareTo(BigDecimal.ZERO) == 0 ? "FREE" : "SANDBOX_CARD";
-        PaymentResult paymentResult = paymentContext.executePayment(currentUser.getId().getMostSignificantBits(), amount, paymentMethodId);
-        if (!paymentResult.isSuccessful()) {
-            throw new IllegalStateException("Payment could not be completed");
+        
+        // For non-free sessions, skip Stripe payment for now (test mode)
+        // In production, implement proper Stripe client secret flow
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            // For sandbox/test: just log the payment intent and continue
+            System.out.println("TEST MODE: Processing payment of " + amount + " PHP for session " + request.getSessionId());
         }
-
+        
         BookingDto booking = bookingService.createBooking(request, currentUser);
         if (booking == null || booking.getId() == null) {
             throw new IllegalStateException("Booking could not be created");

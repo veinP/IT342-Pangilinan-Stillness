@@ -98,125 +98,7 @@ export interface Pagination {
   pages: number;
 }
 
-const fallbackQuote: Quote = {
-  text: 'The present moment is filled with joy and happiness.',
-  author: 'Thich Nhat Hanh',
-  source: 'local',
-};
 
-const fallbackSessions: Session[] = [
-  {
-    id: 'session-1',
-    title: 'Morning Breathwork Flow',
-    description: 'Guided breathing exercises to improve focus and reduce stress.',
-    instructor: {
-      id: 'ins-1',
-      fullName: 'Arielle Ramos',
-      specialty: 'Breathwork',
-      yearsExperience: 6,
-      certifications: ['Pranayama Coach'],
-    },
-    startTime: new Date(Date.now() + 1000 * 60 * 60 * 28).toISOString(),
-    endTime: new Date(Date.now() + 1000 * 60 * 60 * 29).toISOString(),
-    capacity: 20,
-    bookedCount: 12,
-    price: 15,
-    type: 'Breathwork',
-    thumbnailUrl: null,
-    location: 'StillNess Studio A',
-    available: true,
-  },
-  {
-    id: 'session-2',
-    title: 'Sunrise Vinyasa Yoga',
-    description: 'Begin your day with energizing yoga and mindful transitions.',
-    instructor: {
-      id: 'ins-2',
-      fullName: 'Mika Tan',
-      specialty: 'Yoga',
-      yearsExperience: 8,
-      certifications: ['RYT-500'],
-    },
-    startTime: new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString(),
-    endTime: new Date(Date.now() + 1000 * 60 * 60 * 49).toISOString(),
-    capacity: 24,
-    bookedCount: 20,
-    price: 20,
-    type: 'Yoga',
-    thumbnailUrl: null,
-    location: 'StillNess Rooftop Deck',
-    available: true,
-  },
-  {
-    id: 'session-3',
-    title: 'Guided Evening Meditation',
-    description: 'A calming session for emotional reset and better sleep quality.',
-    instructor: {
-      id: 'ins-3',
-      fullName: 'Kai Mendoza',
-      specialty: 'Meditation',
-      yearsExperience: 10,
-      certifications: ['Mindfulness-Based Stress Reduction'],
-    },
-    startTime: new Date(Date.now() + 1000 * 60 * 60 * 72).toISOString(),
-    endTime: new Date(Date.now() + 1000 * 60 * 60 * 73).toISOString(),
-    capacity: 16,
-    bookedCount: 16,
-    price: 0,
-    type: 'Meditation',
-    thumbnailUrl: null,
-    location: 'StillNess Quiet Hall',
-    available: false,
-  },
-];
-
-const fallbackBookings: Booking[] = [
-  {
-    id: 'booking-1',
-    bookingNumber: 'STN-2026-0001',
-    session: fallbackSessions[0],
-    status: 'CONFIRMED',
-    paymentStatus: 'PAID',
-    amount: 15,
-    bookedAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    cancellableUntil: new Date(Date.now() + 1000 * 60 * 60 * 22).toISOString(),
-  },
-  {
-    id: 'booking-2',
-    bookingNumber: 'STN-2026-0002',
-    session: fallbackSessions[2],
-    status: 'CANCELLED',
-    paymentStatus: 'REFUNDED',
-    amount: 0,
-    bookedAt: new Date(Date.now() - 1000 * 60 * 60 * 75).toISOString(),
-    cancellableUntil: null,
-  },
-];
-
-const fallbackPayments: PaymentRecord[] = [
-  {
-    id: 'pay-1',
-    bookingNumber: 'STN-2026-0001',
-    userName: 'Demo User',
-    sessionTitle: fallbackSessions[0].title,
-    amount: 15,
-    cardMasked: '**** **** **** 4242',
-    transactionId: 'pi_demo_001',
-    date: new Date().toISOString(),
-    status: 'PAID',
-  },
-  {
-    id: 'pay-2',
-    bookingNumber: 'STN-2026-0007',
-    userName: 'Demo User',
-    sessionTitle: fallbackSessions[2].title,
-    amount: 0,
-    cardMasked: '**** **** **** 1881',
-    transactionId: 'pi_demo_002',
-    date: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
-    status: 'REFUNDED',
-  },
-];
 
 function normalizeSession(raw: Partial<Session> & { id?: string; title?: string }): Session {
   const capacity = raw.capacity ?? 1;
@@ -349,9 +231,9 @@ export const stillnessApi = {
       if (payload.text && payload.author) {
         return { text: payload.text, author: payload.author, source: 'api' };
       }
-      return fallbackQuote;
-    } catch {
-      return fallbackQuote;
+      throw new Error('No quote available');
+    } catch (err: unknown) {
+      throw new Error(formatApiError(err, 'Unable to fetch quote.'));
     }
   },
 
@@ -389,20 +271,9 @@ export const stillnessApi = {
         pagination: { page: 0, limit: 20, total: sessions.length, pages: 1 },
       };
     } catch {
-      const normalizedType = filters.type?.toLowerCase();
-      const normalizedQuery = filters.query?.trim().toLowerCase();
-      const sessions = fallbackSessions.filter((session) => {
-        const byType = !normalizedType || normalizedType === 'all' || session.type.toLowerCase() === normalizedType;
-        const byQuery =
-          !normalizedQuery ||
-          session.title.toLowerCase().includes(normalizedQuery) ||
-          session.instructor.fullName.toLowerCase().includes(normalizedQuery);
-        return byType && byQuery;
-      });
-
       return {
-        sessions,
-        pagination: { page: 0, limit: sessions.length, total: sessions.length, pages: 1 },
+        sessions: [],
+        pagination: { page: 0, limit: 0, total: 0, pages: 0 },
       };
     }
   },
@@ -421,9 +292,8 @@ export const stillnessApi = {
       }
 
       return normalizeSession({ id, title: 'Session Details' });
-    } catch {
-      const existing = fallbackSessions.find((session) => session.id === id);
-      return existing ?? fallbackSessions[0];
+    } catch (err: unknown) {
+      throw new Error(formatApiError(err, 'Failed to fetch session.'));
     }
   },
 
@@ -478,7 +348,7 @@ export const stillnessApi = {
       }
       return [];
     } catch {
-      return fallbackBookings;
+      return [];
     }
   },
 
@@ -544,15 +414,7 @@ export const stillnessApi = {
       }
       return [];
     } catch {
-      return [
-        {
-          fullName: 'Demo User',
-          email: 'demo@stillness.app',
-          bookingNumber: 'STN-2026-0001',
-          status: 'CONFIRMED',
-          paid: true,
-        },
-      ];
+      return [];
     }
   },
 
@@ -583,14 +445,8 @@ export const stillnessApi = {
       return { summary: { totalRevenue: 0, paidTransactions: 0, failedTransactions: 0 }, records: [] };
     } catch {
       return {
-        summary: {
-          totalRevenue: fallbackPayments
-            .filter((record) => record.status === 'PAID')
-            .reduce((acc, record) => acc + record.amount, 0),
-          paidTransactions: fallbackPayments.filter((record) => record.status === 'PAID').length,
-          failedTransactions: fallbackPayments.filter((record) => record.status === 'FAILED').length,
-        },
-        records: fallbackPayments,
+        summary: { totalRevenue: 0, paidTransactions: 0, failedTransactions: 0 },
+        records: [],
       };
     }
   },

@@ -258,6 +258,17 @@ export default function AdminSessionsPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          <button 
+            type="button" 
+            className="filter-btn-clear"
+            onClick={() => {
+              setSearchQuery('');
+              setFilterType('');
+              setFilterStatus('');
+            }}
+          >
+            Clear
+          </button>
           <select 
             className="search-select"
             value={filterType}
@@ -277,17 +288,6 @@ export default function AdminSessionsPage() {
             <option value="Active">Available</option>
             <option value="Inactive">Unavailable</option>
           </select>
-          <button 
-            type="button" 
-            className="ghost-btn"
-            onClick={() => {
-              setSearchQuery('');
-              setFilterType('');
-              setFilterStatus('');
-            }}
-          >
-            Clear Filters
-          </button>
         </div>
       </section>
 
