@@ -9,8 +9,11 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class AppConfig {
 
-    @Value("${stripe.api.key}")
-    private String stripeApiKey;
+    private final String stripeApiKey;
+
+    public AppConfig(@Value("${stripe.api.key}") String stripeApiKey) {
+        this.stripeApiKey = stripeApiKey;
+    }
 
     @Bean
     public RestTemplate restTemplate() {
