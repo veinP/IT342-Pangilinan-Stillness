@@ -6,12 +6,14 @@ import edu.cit.pangilinan.stillness.model.Booking;
 import edu.cit.pangilinan.stillness.model.Payment;
 import edu.cit.pangilinan.stillness.model.Session;
 import edu.cit.pangilinan.stillness.model.User;
+import com.stillness.event.BookingCreatedEvent;
 import edu.cit.pangilinan.stillness.repository.BookingRepository;
 import edu.cit.pangilinan.stillness.repository.PaymentRepository;
 import edu.cit.pangilinan.stillness.repository.SessionRepository;
 import edu.cit.pangilinan.stillness.repository.UserRepository;
 import edu.cit.pangilinan.stillness.dto.response.SessionDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +39,9 @@ public class BookingService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     private User resolveCurrentUser(User user) {
         if (user != null && user.getId() != null) {
@@ -86,6 +91,8 @@ public class BookingService {
 
         Booking saved = bookingRepository.save(booking);
 
+        eventPublisher.publishEvent(new BookingCreatedEvent(this, saved, resolvedUser.getEmail()));
+
         Payment payment = Payment.builder()
                 .booking(saved)
                 .user(resolvedUser)
@@ -105,10 +112,6 @@ public class BookingService {
             dto.setPaymentStatus(paymentStatus);
             dto.setPaymentIntentId(paymentIntentId);
             return dto;
-    }
-
-    public Booking getBookingEntity(UUID id) {
-        return bookingRepository.findById(id).orElse(null);
     }
 
     public BookingDto getBookingById(UUID id) {

@@ -1,12 +1,10 @@
 package com.stillness.facade;
 
-import com.stillness.notification.EmailNotificationFactory;
 import com.stillness.payment.PaymentContext;
 import com.stillness.payment.PaymentResult;
 import edu.cit.pangilinan.stillness.dto.request.CreateBookingRequest;
 import edu.cit.pangilinan.stillness.dto.response.BookingDto;
 import edu.cit.pangilinan.stillness.dto.response.SessionDetailDto;
-import edu.cit.pangilinan.stillness.model.Booking;
 import edu.cit.pangilinan.stillness.model.User;
 import edu.cit.pangilinan.stillness.service.BookingService;
 import edu.cit.pangilinan.stillness.service.SessionService;
@@ -20,18 +18,15 @@ public class BookingFacade {
     private final SessionService sessionService;
     private final PaymentContext paymentContext;
     private final BookingService bookingService;
-    private final EmailNotificationFactory emailNotificationFactory;
 
     public BookingFacade(
             SessionService sessionService,
             PaymentContext paymentContext,
-            BookingService bookingService,
-            EmailNotificationFactory emailNotificationFactory
+            BookingService bookingService
     ) {
         this.sessionService = sessionService;
         this.paymentContext = paymentContext;
         this.bookingService = bookingService;
-        this.emailNotificationFactory = emailNotificationFactory;
     }
 
     public BookingDto completeBooking(User currentUser, CreateBookingRequest request) {
@@ -55,13 +50,6 @@ public class BookingFacade {
         BookingDto booking = bookingService.createBooking(request, currentUser);
         if (booking == null || booking.getId() == null) {
             throw new IllegalStateException("Booking could not be created");
-        }
-
-        Booking bookingEntity = bookingService.getBookingEntity(booking.getId());
-        if (bookingEntity != null) {
-            emailNotificationFactory
-                    .createNotification("BOOKING_CONFIRMATION", currentUser.getEmail(), bookingEntity)
-                    .send();
         }
 
         return booking;
