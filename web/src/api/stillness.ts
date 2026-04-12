@@ -210,30 +210,26 @@ export const stillnessApi = {
   },
 
   async getRandomQuote(): Promise<Quote> {
-    // Prefer live quotes from ZenQuotes, then fall back to backend and local defaults.
-    try {
-      const zenResponse = await fetch('https://zenquotes.io/api/random');
-      if (zenResponse.ok) {
-        const zenPayload = (await zenResponse.json()) as Array<{ q?: string; a?: string }>;
-        const quote = zenPayload[0];
-        if (quote?.q && quote?.a) {
-          return { text: quote.q, author: quote.a, source: 'zenquotes' };
-        }
-      }
-    } catch {
-      // Ignore external API failure and continue to internal fallback.
-    }
+    const fallbackQuotes: Quote[] = [
+      { text: 'Peace comes from within. Do not seek it without.', author: 'Buddha', source: 'local' },
+      { text: 'The quieter you become, the more you can hear.', author: 'Ram Dass', source: 'local' },
+      { text: 'Stillness is where creativity and solutions are found.', author: 'StillNess', source: 'local' },
+      { text: 'Inhale the future, exhale the past.', author: 'Unknown', source: 'local' },
+    ];
 
     try {
       const res = await api.get<ApiResponse<{ quote?: Quote; text?: string; author?: string }>>('/quotes/random');
       const payload = unwrap(res);
-      if (payload.quote) return payload.quote;
+
+      if (payload.quote) {
+        return payload.quote;
+      }
+
       if (payload.text && payload.author) {
         return { text: payload.text, author: payload.author, source: 'api' };
       }
-      throw new Error('No quote available');
-    } catch (err: unknown) {
-      throw new Error(formatApiError(err, 'Unable to fetch quote.'));
+    } catch {
+      return fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
     }
   },
 
