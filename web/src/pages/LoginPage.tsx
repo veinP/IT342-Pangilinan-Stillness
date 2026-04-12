@@ -85,7 +85,7 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = '/api/v1/oauth2/authorization/google';
+    window.location.href = 'http://localhost:8080/api/v1/oauth2/authorization/google';
   };
 
   return (

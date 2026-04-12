@@ -103,7 +103,7 @@ export default function RegisterPage() {
   const { register } = useAuth();
 
   const handleGoogleLogin = () => {
-    window.location.href = '/api/v1/oauth2/authorization/google';
+    window.location.href = 'http://localhost:8080/api/v1/oauth2/authorization/google';
   };
 
   const [values, setValues] = useState<FormState>({
