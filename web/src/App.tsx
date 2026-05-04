@@ -1,18 +1,34 @@
+/**
+ * Root Application Router — Vertical Slice Architecture
+ * Each route now lives within its own feature slice folder.
+ */
 import { Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import LandingPage from './pages/LandingPage'
-import SessionsPage from './pages/SessionsPage'
-import SessionDetailPage from './pages/SessionDetailPage'
-import BookingCheckoutPage from './pages/BookingCheckoutPage'
-import MyBookingsPage from './pages/MyBookingsPage'
-import AdminSessionsPage from './pages/AdminSessionsPage'
-import AdminAttendeesPage from './pages/AdminAttendeesPage'
-import AdminPaymentsPage from './pages/AdminPaymentsPage'
-import OAuth2CallbackPage from './pages/OAuth2CallbackPage'
-import ProtectedRoute from './components/ProtectedRoute'
-import GuestRoute from './components/GuestRoute'
-import AdminRoute from './components/AdminRoute'
+
+// Auth slice
+import LoginPage from './features/auth/LoginPage'
+import RegisterPage from './features/auth/RegisterPage'
+import OAuth2CallbackPage from './features/auth/OAuth2CallbackPage'
+
+// Sessions slice
+import SessionsPage from './features/sessions/SessionsPage'
+import SessionDetailPage from './features/sessions/SessionDetailPage'
+
+// Bookings slice
+import BookingCheckoutPage from './features/bookings/BookingCheckoutPage'
+import MyBookingsPage from './features/bookings/MyBookingsPage'
+
+// Admin slice
+import AdminSessionsPage from './features/admin/AdminSessionsPage'
+import AdminAttendeesPage from './features/admin/AdminAttendeesPage'
+import AdminPaymentsPage from './features/admin/AdminPaymentsPage'
+
+// Landing / Dashboard
+import LandingPage from './features/landing/LandingPage'
+
+// Shared guards
+import ProtectedRoute from './shared/components/ProtectedRoute'
+import GuestRoute from './shared/components/GuestRoute'
+import AdminRoute from './shared/components/AdminRoute'
 
 function App() {
   return (

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { stillnessApi, type Session } from '../api/stillness';
 import AppNav from './Appnav';
-import '../styles/SessionDetailPage.css';
+import '../../styles/SessionDetailPage.css';
 
 /* ── Icons ───────────────────────────────────────────────────── */
 const ChevronRight = () => (

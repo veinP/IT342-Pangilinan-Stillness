@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"edu.cit.pangilinan.stillness", "com.stillness"})
+@ComponentScan(basePackages = {"edu.cit.pangilinan.stillness"})
 @EnableAsync
 public class StillnessApplication {
 

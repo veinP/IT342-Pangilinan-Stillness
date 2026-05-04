@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { stillnessApi, type Session } from '../api/stillness';
 import AppNav from './Appnav';
-import '../styles/BookingCheckoutPage.css';
+import '../../styles/BookingCheckoutPage.css';
 
 const ChevronRight = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

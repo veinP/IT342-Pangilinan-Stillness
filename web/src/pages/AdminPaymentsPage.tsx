@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import AppShell from '../components/AppShell';
 import { useAuth } from '../context/AuthContext';
 import { stillnessApi, type PaymentRecord, type PaymentSummary } from '../api/stillness';
-import '../styles/AdminPaymentsPage.css';
+import '../../styles/AdminPaymentsPage.css';
 
 export default function AdminPaymentsPage() {
   const { user } = useAuth();

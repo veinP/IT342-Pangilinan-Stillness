@@ -1,7 +1,11 @@
 package edu.cit.pangilinan.stillness;
 
-import edu.cit.pangilinan.stillness.model.User;
-import edu.cit.pangilinan.stillness.repository.UserRepository;
+import edu.cit.pangilinan.stillness.shared.model.User;
+import edu.cit.pangilinan.stillness.shared.repository.InstructorRepository;
+import edu.cit.pangilinan.stillness.shared.repository.BookingRepository;
+import edu.cit.pangilinan.stillness.shared.repository.SessionRepository;
+import edu.cit.pangilinan.stillness.shared.repository.PaymentRepository;
+import edu.cit.pangilinan.stillness.shared.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +33,27 @@ class AuthSecurityIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    private InstructorRepository instructorRepository;
+
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
+    private SessionRepository sessionRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setupUser() {
+        // Clear in FK-safe order: payments → bookings → sessions → instructors → users
+        paymentRepository.deleteAll();
+        bookingRepository.deleteAll();
+        sessionRepository.deleteAll();
+        instructorRepository.deleteAll();
         userRepository.deleteAll();
         userRepository.save(User.builder()
                 .email("safe.user@example.com")
