@@ -20,8 +20,20 @@ data class SessionDto(
     val location: String?
 )
 
+data class SessionListData(
+    val sessions: List<SessionDto>,
+    val pagination: PaginationDto
+)
+
+data class PaginationDto(
+    val page: Int,
+    val limit: Int,
+    val total: Long,
+    val pages: Int
+)
+
 data class SessionResponse(
     val success: Boolean,
-    val data: List<SessionDto>?,
+    val data: SessionListData?,
     val error: ErrorDetail?
 )

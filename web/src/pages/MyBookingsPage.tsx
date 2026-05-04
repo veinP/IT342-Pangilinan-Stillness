@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { isBookingCancellable, stillnessApi, type Booking } from '../api/stillness';
-import '../styles/MyBookingsPage.css';
+import '../../styles/MyBookingsPage.css';
 import AppNav from './Appnav';
 
 /* ── Icons ───────────────────────────────────────────────────── */

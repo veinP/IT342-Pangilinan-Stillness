@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import '../styles/LoginPage.css';
+import { startGoogleOAuth } from '../api/auth';
+import '../../styles/LoginPage.css';
 
 /* ── Icons ──────────────────────────────────────────────────── */
 const GoogleIcon = () => (
@@ -84,8 +85,14 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = '/api/v1/oauth2/authorization/google';
+  const handleGoogleLogin = async () => {
+    try {
+      await startGoogleOAuth();
+    } catch (error) {
+      setErrors({
+        general: error instanceof Error ? error.message : 'Google sign in is currently unavailable.'
+      });
+    }
   };
 
   return (

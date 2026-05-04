@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { stillnessApi, type Quote, type Session } from '../api/stillness';
 import { useAuth } from '../context/AuthContext';
 import AppShell from '../components/AppShell';
-import '../styles/SessionsPage.css';
+import '../../styles/SessionsPage.css';
 
 const SESSION_TYPES = ['all', 'Meditation', 'Yoga', 'Breathwork'];
 

@@ -1,7 +1,8 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import '../styles/RegisterPage.css';
+import { startGoogleOAuth } from '../api/auth';
+import '../../styles/RegisterPage.css';
 
 /* ── Icons ──────────────────────────────────────────────────── */
 const GoogleIcon = () => (
@@ -102,8 +103,15 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const { register } = useAuth();
 
-  const handleGoogleLogin = () => {
-    window.location.href = '/api/v1/oauth2/authorization/google';
+  const handleGoogleLogin = async () => {
+    try {
+      await startGoogleOAuth();
+    } catch (error) {
+      setErrors(prev => ({
+        ...prev,
+        general: error instanceof Error ? error.message : 'Google sign in is currently unavailable.'
+      }));
+    }
   };
 
   const [values, setValues] = useState<FormState>({

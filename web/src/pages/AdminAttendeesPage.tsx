@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import { useAuth } from '../context/AuthContext';
 import { stillnessApi } from '../api/stillness';
-import '../styles/AdminAttendeesPage.css';
+import '../../styles/AdminAttendeesPage.css';
 
 const ChevronRight = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

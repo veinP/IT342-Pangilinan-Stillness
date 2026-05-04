@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import { useAuth } from '../context/AuthContext';
 import { stillnessApi, type Session } from '../api/stillness';
-import '../styles/AdminSessionsPage.css';
+import '../../styles/AdminSessionsPage.css';
 
 interface SessionFormState {
   id?: string;

@@ -228,6 +228,7 @@ export const stillnessApi = {
       if (payload.text && payload.author) {
         return { text: payload.text, author: payload.author, source: 'api' };
       }
+      return fallbackQuotes[0];
     } catch {
       return fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
     }

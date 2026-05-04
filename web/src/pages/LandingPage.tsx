@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { stillnessApi, type Quote, type Session } from '../api/stillness';
-import '../styles/LandingPage.css';
+import { startGoogleOAuth } from '../api/auth';
+import '../../styles/LandingPage.css';
 import AppNav from './Appnav';
 
 /* ── Icons ──────────────────────────────────────────────────── */
@@ -95,6 +96,7 @@ export default function LandingPage() {
   const [quote, setQuote]       = useState<Quote | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [spinning, setSpinning] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
   const refreshRef              = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -125,8 +127,13 @@ export default function LandingPage() {
     setTimeout(() => setSpinning(false), 500);
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = '/api/v1/oauth2/authorization/google';
+  const handleGoogleLogin = async () => {
+    setGoogleError(null);
+    try {
+      await startGoogleOAuth();
+    } catch (error) {
+      setGoogleError(error instanceof Error ? error.message : 'Google sign in is currently unavailable.');
+    }
   };
 
   return (
@@ -149,6 +156,7 @@ export default function LandingPage() {
             </button>
           </div>
         )}
+        {googleError && <p className="sn-hero__error">{googleError}</p>}
       </section>
 
       {/* ══ QUOTE ════════════════════════════════════════════════ */}

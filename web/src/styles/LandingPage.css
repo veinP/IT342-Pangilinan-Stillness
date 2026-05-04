@@ -144,6 +144,13 @@ html, body {
   gap: 16px;
 }
 
+.sn-hero__error {
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #DC2626;
+}
+
 /* ================================================================
    QUOTE BANNER  (Figma: full bleed, bg-blue-50, h≈160)
    ================================================================ */
