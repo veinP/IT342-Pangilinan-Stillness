@@ -4,6 +4,7 @@ import { useAuth } from '../../shared/context/AuthContext';
 import { sessionsApi, type Session } from '../sessions/api';
 import { quotesApi, type Quote } from '../../shared/api/quotes';
 import { startGoogleOAuth } from '../auth/api';
+import '../../styles/LandingPage.css';
 import AppNav from '../../shared/components/Appnav';
 
 /* ── Icons ──────────────────────────────────────────────────── */
