@@ -1,4 +1,4 @@
-package edu.cit.pangilinan.stillness.auth
+package edu.cit.pangilinan.stillness.shared.auth
 
 import android.content.Context
 import android.content.SharedPreferences

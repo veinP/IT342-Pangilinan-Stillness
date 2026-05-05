@@ -1,4 +1,9 @@
-package edu.cit.pangilinan.stillness
+package edu.cit.pangilinan.stillness.features.sessions
+
+import edu.cit.pangilinan.stillness.R
+
+import edu.cit.pangilinan.stillness.shared.api.ApiClient
+
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,8 +14,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import edu.cit.pangilinan.stillness.api.ApiClient
-import edu.cit.pangilinan.stillness.api.SessionApi
+import edu.cit.pangilinan.stillness.features.sessions.SessionApi
 import edu.cit.pangilinan.stillness.model.SessionResponse
 import edu.cit.pangilinan.stillness.model.SessionDto
 import java.util.*

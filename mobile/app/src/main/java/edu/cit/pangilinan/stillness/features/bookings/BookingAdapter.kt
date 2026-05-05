@@ -1,4 +1,9 @@
-package edu.cit.pangilinan.stillness
+package edu.cit.pangilinan.stillness.features.bookings
+
+import edu.cit.pangilinan.stillness.R
+
+import edu.cit.pangilinan.stillness.features.sessions.SessionDetailActivity
+
 
 import android.content.Intent
 import android.content.res.ColorStateList

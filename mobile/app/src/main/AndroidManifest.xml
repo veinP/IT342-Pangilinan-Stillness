@@ -28,12 +28,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LoginActivity" android:exported="false" />
-        <activity android:name=".RegisterActivity" android:exported="false"
+        <activity android:name=".features.auth.LoginActivity" android:exported="false" />
+        <activity android:name=".features.auth.RegisterActivity" android:exported="false"
             android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".DashboardActivity" android:exported="false" />
-        <activity android:name=".SessionsActivity" android:exported="false" />
-        <activity android:name=".SessionDetailActivity" android:exported="false" />
-        <activity android:name=".MyBookingsActivity" android:exported="false" />
-        <activity android:name=".LandingActivity" android:exported="false" />
+        <activity android:name=".features.dashboard.DashboardActivity" android:exported="false" />
+        <activity android:name=".features.sessions.SessionsActivity" android:exported="false" />
+        <activity android:name=".features.sessions.SessionDetailActivity" android:exported="false" />
+        <activity android:name=".features.bookings.MyBookingsActivity" android:exported="false" />
+        <activity android:name=".features.landing.LandingActivity" android:exported="false" />
     </application></manifest>

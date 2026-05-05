@@ -1,4 +1,7 @@
-package edu.cit.pangilinan.stillness.api
+package edu.cit.pangilinan.stillness.features.dashboard
+
+import edu.cit.pangilinan.stillness.shared.api.ApiClient
+
 
 import com.google.gson.Gson
 import edu.cit.pangilinan.stillness.model.QuoteResponse

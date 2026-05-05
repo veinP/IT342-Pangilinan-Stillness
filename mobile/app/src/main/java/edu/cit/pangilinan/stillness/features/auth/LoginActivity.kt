@@ -1,4 +1,11 @@
-package edu.cit.pangilinan.stillness
+package edu.cit.pangilinan.stillness.features.auth
+
+import edu.cit.pangilinan.stillness.R
+
+import edu.cit.pangilinan.stillness.features.dashboard.DashboardActivity
+import edu.cit.pangilinan.stillness.shared.api.ApiClient
+import edu.cit.pangilinan.stillness.shared.auth.SessionManager
+
 
 import android.app.Activity
 import android.content.Intent
@@ -12,8 +19,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import edu.cit.pangilinan.stillness.api.ApiClient
-import edu.cit.pangilinan.stillness.auth.SessionManager
 import edu.cit.pangilinan.stillness.model.LoginResponse
 
 class LoginActivity : Activity() {

@@ -1,4 +1,12 @@
-package edu.cit.pangilinan.stillness
+package edu.cit.pangilinan.stillness.features.sessions
+
+import edu.cit.pangilinan.stillness.R
+
+import edu.cit.pangilinan.stillness.features.auth.LoginActivity
+import edu.cit.pangilinan.stillness.features.bookings.BookingApi
+import edu.cit.pangilinan.stillness.features.bookings.MyBookingsActivity
+import edu.cit.pangilinan.stillness.shared.api.ApiClient
+
 
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -10,8 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.gson.Gson
 import edu.cit.pangilinan.stillness.model.SessionDto
-import edu.cit.pangilinan.stillness.api.BookingApi
-import edu.cit.pangilinan.stillness.api.ApiClient
 import edu.cit.pangilinan.stillness.model.SingleBookingResponse
 import java.text.SimpleDateFormat
 import java.util.*

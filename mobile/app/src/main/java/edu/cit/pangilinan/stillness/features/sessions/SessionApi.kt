@@ -1,4 +1,7 @@
-package edu.cit.pangilinan.stillness.api
+package edu.cit.pangilinan.stillness.features.sessions
+
+import edu.cit.pangilinan.stillness.shared.api.ApiClient
+
 
 import android.util.Log
 import edu.cit.pangilinan.stillness.model.SessionResponse

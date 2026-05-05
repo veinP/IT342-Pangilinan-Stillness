@@ -1,4 +1,6 @@
-package edu.cit.pangilinan.stillness
+package edu.cit.pangilinan.stillness.features.sessions
+
+import edu.cit.pangilinan.stillness.R
 
 import android.content.res.ColorStateList
 import android.graphics.Color

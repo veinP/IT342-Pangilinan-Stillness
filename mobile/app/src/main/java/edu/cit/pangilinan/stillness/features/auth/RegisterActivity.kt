@@ -1,4 +1,9 @@
-package edu.cit.pangilinan.stillness
+package edu.cit.pangilinan.stillness.features.auth
+
+import edu.cit.pangilinan.stillness.R
+
+import edu.cit.pangilinan.stillness.shared.api.ApiClient
+
 
 import android.app.Activity
 import android.content.Intent
@@ -9,7 +14,6 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import android.widget.*
-import edu.cit.pangilinan.stillness.api.ApiClient
 import edu.cit.pangilinan.stillness.model.RegisterResponse
 
 class RegisterActivity : Activity() {

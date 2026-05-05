@@ -1,4 +1,11 @@
-package edu.cit.pangilinan.stillness
+package edu.cit.pangilinan.stillness.features.bookings
+
+import edu.cit.pangilinan.stillness.R
+
+import edu.cit.pangilinan.stillness.features.auth.LoginActivity
+import edu.cit.pangilinan.stillness.features.sessions.SessionsActivity
+import edu.cit.pangilinan.stillness.shared.api.ApiClient
+
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,8 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.tabs.TabLayout
-import edu.cit.pangilinan.stillness.api.ApiClient
-import edu.cit.pangilinan.stillness.api.BookingApi
+import edu.cit.pangilinan.stillness.features.bookings.BookingApi
 import edu.cit.pangilinan.stillness.model.ListBookingResponse
 import edu.cit.pangilinan.stillness.model.BookingDto
 import java.text.SimpleDateFormat

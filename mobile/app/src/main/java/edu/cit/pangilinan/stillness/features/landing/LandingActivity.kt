@@ -1,4 +1,17 @@
-package edu.cit.pangilinan.stillness
+package edu.cit.pangilinan.stillness.features.landing
+
+import edu.cit.pangilinan.stillness.R
+
+import edu.cit.pangilinan.stillness.features.auth.LoginActivity
+import edu.cit.pangilinan.stillness.features.dashboard.DashboardActivity
+import edu.cit.pangilinan.stillness.features.dashboard.QuoteApi
+import edu.cit.pangilinan.stillness.features.sessions.SessionAdapter
+import edu.cit.pangilinan.stillness.features.sessions.SessionApi
+import edu.cit.pangilinan.stillness.features.sessions.SessionDetailActivity
+import edu.cit.pangilinan.stillness.features.sessions.SessionsActivity
+import edu.cit.pangilinan.stillness.shared.api.ApiClient
+import edu.cit.pangilinan.stillness.shared.auth.SessionManager
+
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,12 +21,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import edu.cit.pangilinan.stillness.api.ApiClient
-import edu.cit.pangilinan.stillness.api.QuoteApi
-import edu.cit.pangilinan.stillness.api.SessionApi
 import edu.cit.pangilinan.stillness.model.QuoteResponse
 import edu.cit.pangilinan.stillness.model.SessionResponse
-import edu.cit.pangilinan.stillness.auth.SessionManager
 
 class LandingActivity : AppCompatActivity() {
 
