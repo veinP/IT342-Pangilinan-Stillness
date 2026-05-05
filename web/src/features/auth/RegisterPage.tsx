@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../shared/context/AuthContext';
-import { startGoogleOAuth } from '../../api/auth';
+import { startGoogleOAuth } from './api';
 import '../../styles/RegisterPage.css';
 
 /* ── Icons ──────────────────────────────────────────────────── */

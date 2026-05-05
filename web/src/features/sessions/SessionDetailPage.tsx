@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { stillnessApi, type Session } from '../../api/stillness';
+import { sessionsApi, type Session } from './api';
 import AppNav from '../../shared/components/Appnav';
 import '../../styles/SessionDetailPage.css';
 
@@ -93,7 +93,7 @@ export default function SessionDetailPage() {
   useEffect(() => {
     if (!sessionId) { setError('Session not found.'); setLoading(false); return; }
     let live = true;
-    stillnessApi.getSessionById(sessionId)
+    sessionsApi.getSessionById(sessionId)
       .then((s: any) => { if (live) setSession(s); })
       .catch((err: any) => { if (live) setError(err?.message ?? 'Failed to load session.'); })
       .finally(() => { if (live) setLoading(false); });

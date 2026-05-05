@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { stillnessApi, type Quote, type Session } from '../../api/stillness';
+import { sessionsApi, type Session } from './api';
+import { quotesApi, type Quote } from '../../shared/api/quotes';
 import { useAuth } from '../../shared/context/AuthContext';
 import AppShell from '../../shared/components/AppShell';
 import '../../styles/SessionsPage.css';
@@ -102,12 +103,12 @@ export default function SessionsPage() {
     setError(null);
 
     Promise.all([
-      stillnessApi.getSessions({
+      sessionsApi.getSessions({
         type: selectedType,
         query,
         instructor: instructorFilter !== 'all' ? instructorFilter : undefined,
       }),
-      stillnessApi.getRandomQuote(),
+      quotesApi.getRandomQuote(),
     ])
       .then(([res, q]) => {
         if (live) {
@@ -135,7 +136,7 @@ export default function SessionsPage() {
   const handleRefreshQuote = async () => {
     setRefreshingQuote(true);
     try {
-      setQuote(await stillnessApi.getRandomQuote());
+      setQuote(await quotesApi.getRandomQuote());
     } finally {
       setRefreshingQuote(false);
     }
@@ -145,7 +146,7 @@ export default function SessionsPage() {
     setRefreshingSessions(true);
     setError(null);
     try {
-      const res = await stillnessApi.getSessions({
+      const res = await sessionsApi.getSessions({
         type: selectedType,
         query,
         instructor: instructorFilter !== 'all' ? instructorFilter : undefined,
