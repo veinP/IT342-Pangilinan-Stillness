@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AppShell from '../../shared/components/AppShell';
-import { stillnessApi, type Quote, type Session } from '../../api/stillness';
+import { sessionsApi, type Session } from '../sessions/api';
+import { quotesApi, type Quote } from '../../shared/api/quotes';
 
 export default function DashboardPage() {
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -13,8 +14,8 @@ export default function DashboardPage() {
 
     const load = async () => {
       const [quoteData, sessionsData] = await Promise.all([
-        stillnessApi.getRandomQuote(),
-        stillnessApi.getSessions({ page: 1, limit: 4 }),
+        quotesApi.getRandomQuote(),
+        sessionsApi.getSessions({ page: 1, limit: 4 }),
       ]);
 
       if (!mounted) return;
@@ -50,7 +51,7 @@ export default function DashboardPage() {
             <button 
               type="button" 
               className="quote-refresh"
-              onClick={async () => setQuote(await stillnessApi.getRandomQuote())}
+              onClick={async () => setQuote(await quotesApi.getRandomQuote())}
               title="Get a new quote"
             >
               🔄

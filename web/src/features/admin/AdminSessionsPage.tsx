@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from '
 import { Link } from 'react-router-dom';
 import AppShell from '../../shared/components/AppShell';
 import { useAuth } from '../../shared/context/AuthContext';
-import { stillnessApi, type Session } from '../../api/stillness';
+import { adminApi } from './api';
+import { sessionsApi, type Session } from '../sessions/api';
 import '../../styles/AdminSessionsPage.css';
 
 interface SessionFormState {
@@ -78,7 +79,7 @@ export default function AdminSessionsPage() {
   }, [sessions]);
 
   useEffect(() => {
-    stillnessApi.getAdminSessions()
+    adminApi.getAdminSessions()
       .then(setSessions)
       .finally(() => setLoading(false));
   }, []);
@@ -170,12 +171,12 @@ export default function AdminSessionsPage() {
       };
 
       if (editingId) {
-        await stillnessApi.updateSession(editingId, payload);
+        await sessionsApi.updateSession(editingId, payload);
       } else {
-        await stillnessApi.createSession(payload);
+        await sessionsApi.createSession(payload);
       }
 
-      const refreshedSessions = await stillnessApi.getAdminSessions();
+      const refreshedSessions = await adminApi.getAdminSessions();
       setSessions(refreshedSessions);
       setMessage({ type: 'success', text: editingId ? 'Session updated successfully' : 'Session created successfully' });
       setTimeout(() => {
@@ -190,7 +191,7 @@ export default function AdminSessionsPage() {
   const handleDelete = async (sessionId: string) => {
     if (window.confirm('Are you sure you want to delete this session? This action cannot be undone.')) {
       try {
-        await stillnessApi.deleteSession(sessionId);
+        await sessionsApi.deleteSession(sessionId);
         setSessions((prev) => prev.filter((s) => s.id !== sessionId));
         setMessage({ type: 'success', text: 'Session deleted successfully' });
       } catch (error) {

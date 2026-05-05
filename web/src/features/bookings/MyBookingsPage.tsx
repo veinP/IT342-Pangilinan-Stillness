@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { isBookingCancellable, stillnessApi, type Booking } from '../../api/stillness';
+import { isBookingCancellable, bookingsApi, type Booking } from './api';
 import '../../styles/MyBookingsPage.css';
 import AppNav from '../../shared/components/Appnav';
 
@@ -115,7 +115,7 @@ export default function MyBookingsPage() {
 
   useEffect(() => {
     setLoading(true);
-    stillnessApi.getMyBookings()
+    bookingsApi.getMyBookings()
       .then((data: any) => {
         setBookings(data);
       })
@@ -128,7 +128,7 @@ export default function MyBookingsPage() {
   const handleCancelBooking = async (bookingId: string) => {
     if (window.confirm('Are you sure you want to cancel this booking?')) {
       try {
-        await stillnessApi.cancelBooking(bookingId);
+        await bookingsApi.cancelBooking(bookingId);
         setBookings(bookings.map(b => b.id === bookingId ? { ...b, status: 'CANCELLED' } : b));
       } catch (error) {
         alert('Failed to cancel booking: ' + (error instanceof Error ? error.message : 'Unknown error'));

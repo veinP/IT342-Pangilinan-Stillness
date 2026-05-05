@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authApi } from '../../api/auth';
+import { authApi } from './api';
 
 export default function OAuth2CallbackPage() {
   const navigate = useNavigate();

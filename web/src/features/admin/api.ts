@@ -4,6 +4,7 @@
 import api from '../../shared/api/axios';
 import type { ApiResponse } from '../auth/api';
 import type { Session } from '../sessions/api';
+export type { Session };
 import { sessionsApi } from '../sessions/api';
 
 export interface PaymentSummary {

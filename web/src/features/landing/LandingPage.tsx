@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../shared/context/AuthContext';
-import { stillnessApi, type Quote, type Session } from '../../api/stillness';
-import { startGoogleOAuth } from '../../api/auth';
+import { sessionsApi, type Session } from '../sessions/api';
+import { quotesApi, type Quote } from '../../shared/api/quotes';
+import { startGoogleOAuth } from '../auth/api';
 import '../../styles/LandingPage.css';
 import AppNav from '../../shared/components/Appnav';
 
@@ -108,8 +109,8 @@ export default function LandingPage() {
   useEffect(() => {
     let live = true;
     Promise.all([
-      stillnessApi.getRandomQuote(),
-      stillnessApi.getSessions({ page: 0, limit: 3 }),
+      quotesApi.getRandomQuote(),
+      sessionsApi.getSessions({ page: 0, limit: 3 }),
     ]).then(([q, s]) => {
       if (!live) return;
       setQuote(q);
@@ -122,7 +123,7 @@ export default function LandingPage() {
     if (spinning) return;
     setSpinning(true);
     // Refresh gets a new random quote (bypassing daily cache)
-    const q = await stillnessApi.getRandomQuote();
+    const q = await quotesApi.getRandomQuote();
     setQuote(q);
     setTimeout(() => setSpinning(false), 500);
   };

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import AppShell from '../../shared/components/AppShell';
 import { useAuth } from '../../shared/context/AuthContext';
-import { stillnessApi } from '../../api/stillness';
+import { adminApi } from './api';
 import '../../styles/AdminAttendeesPage.css';
 
 const ChevronRight = () => (
@@ -31,7 +31,7 @@ export default function AdminAttendeesPage() {
 
   useEffect(() => {
     if (!sessionId) return;
-    stillnessApi.getAdminAttendees(sessionId)
+    adminApi.getAdminAttendees(sessionId)
       .then(setAttendees)
       .finally(() => setLoading(false));
   }, [sessionId]);

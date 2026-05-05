@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { stillnessApi, type Session } from '../../api/stillness';
+import { bookingsApi } from './api';
+import { sessionsApi, type Session } from '../sessions/api';
 import AppNav from '../../shared/components/Appnav';
 import '../../styles/BookingCheckoutPage.css';
 
@@ -104,7 +105,7 @@ export default function BookingCheckoutPage() {
 
     let active = true;
 
-    stillnessApi.getSessionById(sessionId)
+    sessionsApi.getSessionById(sessionId)
       .then((result: any) => {
         if (!active) return;
         setSession(result);
@@ -144,10 +145,10 @@ export default function BookingCheckoutPage() {
     setSubmitError(null);
 
     try {
-      const booking = await stillnessApi.createBooking(session.id);
+      const booking = await bookingsApi.createBooking(session.id);
 
       if (booking.paymentStatus === 'PENDING' && booking.amount > 0) {
-        await stillnessApi.confirmPayment(booking.paymentIntentId ?? buildPaymentIntentId(), booking.id);
+        await bookingsApi.confirmPayment(booking.paymentIntentId ?? buildPaymentIntentId(), booking.id);
       }
 
       setConfirmationMessage(`Booking confirmed for ${session.title}.`);

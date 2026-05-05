@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import AppShell from '../../shared/components/AppShell';
 import { useAuth } from '../../shared/context/AuthContext';
-import { stillnessApi, type PaymentRecord, type PaymentSummary } from '../../api/stillness';
+import { adminApi, type PaymentRecord, type PaymentSummary } from './api';
 import '../../styles/AdminPaymentsPage.css';
 
 export default function AdminPaymentsPage() {
@@ -13,7 +13,7 @@ export default function AdminPaymentsPage() {
   const [statusFilter, setStatusFilter] = useState('');
 
   useEffect(() => {
-    stillnessApi.getAdminPayments()
+    adminApi.getAdminPayments()
       .then((data: any) => {
         setSummary(data.summary);
         setRecords(data.records);
