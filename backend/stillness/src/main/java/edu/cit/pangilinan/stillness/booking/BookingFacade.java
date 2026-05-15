@@ -50,7 +50,7 @@ public class BookingFacade {
         String paymentIntentId = null;
         if (amount.compareTo(BigDecimal.ZERO) > 0) {
             PaymentResult result = paymentContext.executePayment(
-                    currentUser.getId(),
+                    (long) currentUser.getId().hashCode(),
                     amount,
                     "pm_card_visa" // Stripe test payment method
             );
