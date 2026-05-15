@@ -18,6 +18,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.Window
@@ -27,9 +29,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import edu.cit.pangilinan.stillness.features.dashboard.QuoteApi
 import edu.cit.pangilinan.stillness.model.QuoteResponse
+import edu.cit.pangilinan.stillness.model.SessionDto
 import edu.cit.pangilinan.stillness.model.SessionResponse
 import edu.cit.pangilinan.stillness.model.User
-import java.text.SimpleDateFormat
 import java.util.*
 
 class DashboardActivity : Activity() {
@@ -39,6 +41,12 @@ class DashboardActivity : Activity() {
     private lateinit var tvQuoteText: TextView
     private lateinit var tvQuoteAuthor: TextView
     private lateinit var btnRefreshQuote: ImageButton
+    private lateinit var tvGreeting: TextView
+    private lateinit var etSearch: EditText
+    private lateinit var spinnerCategory: Spinner
+    private lateinit var tvEmptyState: TextView
+
+    private var allSessions: List<SessionDto> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,22 +57,25 @@ class DashboardActivity : Activity() {
     }
 
     private fun setupUI() {
-        // Navbar: Welcome text + Logout
+        // ═══ Navbar (Parity with Web AppNav logged-in mode) ═══
         findViewById<TextView>(R.id.nav_logout).setOnClickListener { showLogoutDialog() }
-        
-        findViewById<Button>(R.id.btnNavSessions).setOnClickListener {
+
+        findViewById<TextView>(R.id.btnNavSessions).setOnClickListener {
             startActivity(Intent(this, SessionsActivity::class.java))
         }
-
-        findViewById<Button>(R.id.btnNavBookings).setOnClickListener {
+        findViewById<TextView>(R.id.btnNavBookings).setOnClickListener {
             startActivity(Intent(this, MyBookingsActivity::class.java))
         }
 
-        findViewById<TextView>(R.id.tvViewAllSessions).setOnClickListener {
-            startActivity(Intent(this, SessionsActivity::class.java))
+        // ═══ Hero Section ═══
+        tvGreeting = findViewById(R.id.tvGreeting)
+
+        findViewById<Button>(R.id.btnRefreshSessions).setOnClickListener {
+            val token = SessionManager.getToken(this) ?: return@setOnClickListener
+            fetchAllSessions(token)
         }
 
-        // Quote section
+        // ═══ Quote Section (Parity with Web .sc-quote) ═══
         tvQuoteText = findViewById(R.id.tvQuoteTextDash)
         tvQuoteAuthor = findViewById(R.id.tvQuoteAuthorDash)
         btnRefreshQuote = findViewById(R.id.btnRefreshQuoteDash)
@@ -74,7 +85,39 @@ class DashboardActivity : Activity() {
             fetchQuote()
         }
 
-        // Sessions RecyclerView
+        // ═══ Search / Filter (Parity with Web .sc-controls) ═══
+        etSearch = findViewById(R.id.etSearch)
+        spinnerCategory = findViewById(R.id.spinnerCategory)
+        tvEmptyState = findViewById(R.id.tvEmptyState)
+
+        // Category Spinner setup
+        val categories = arrayOf("All Types", "Meditation", "Yoga", "Breathwork")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerCategory.adapter = adapter
+
+        spinnerCategory.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                applyFilters()
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
+
+        // Search button
+        findViewById<Button>(R.id.btnSearch).setOnClickListener {
+            applyFilters()
+        }
+
+        // Live search as user types
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                applyFilters()
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // ═══ Sessions RecyclerView ═══
         rvSessions = findViewById(R.id.rvDashboardSessions)
         rvSessions.layoutManager = LinearLayoutManager(this)
         sessionAdapter = SessionAdapter(emptyList()) { session ->
@@ -83,6 +126,24 @@ class DashboardActivity : Activity() {
             startActivity(intent)
         }
         rvSessions.adapter = sessionAdapter
+    }
+
+    private fun applyFilters() {
+        val query = etSearch.text.toString().lowercase(Locale.ROOT)
+        val selectedCategory = spinnerCategory.selectedItem?.toString() ?: "All Types"
+
+        val filteredList = allSessions.filter { session ->
+            val matchesSearch = session.title.lowercase(Locale.ROOT).contains(query) ||
+                    session.resolvedInstructorName().lowercase(Locale.ROOT).contains(query)
+
+            val matchesCategory = selectedCategory == "All Types" ||
+                    session.resolvedType().equals(selectedCategory, ignoreCase = true)
+
+            matchesSearch && matchesCategory
+        }
+
+        sessionAdapter.updateData(filteredList)
+        tvEmptyState.visibility = if (filteredList.isEmpty() && allSessions.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun loadData() {
@@ -94,7 +155,7 @@ class DashboardActivity : Activity() {
 
         loadProfile(token)
         fetchQuote()
-        fetchUpcomingSessions(token)
+        fetchAllSessions(token)
     }
 
     private fun loadProfile(token: String) {
@@ -105,15 +166,15 @@ class DashboardActivity : Activity() {
             override fun onSuccess(result: User) {
                 runOnUiThread {
                     progress.visibility = View.GONE
-                    
-                    findViewById<TextView>(R.id.tv_email).text = result.email
-                    findViewById<TextView>(R.id.tv_member_since).text = formatDate(result.createdAt)
-                    findViewById<TextView>(R.id.tv_full_name_summary).text = result.fullName
-                    findViewById<TextView>(R.id.tv_role_summary).text = result.role.replace("ROLE_", "").lowercase()
-                        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-                    
-                    findViewById<TextView>(R.id.nav_welcome).text = "Welcome, ${result.fullName.split(" ").firstOrNull() ?: "User"}"
-                    
+
+                    // Greeting (Parity with Web: "Hi, {firstName}")
+                    val firstName = result.fullName.split(" ").firstOrNull() ?: "there"
+                    tvGreeting.text = "Hi, $firstName"
+
+                    // Navbar user info
+                    findViewById<TextView>(R.id.nav_welcome).text = firstName
+
+                    // Avatar initials
                     findViewById<TextView>(R.id.tv_avatar_initials).text = result.fullName.split(" ")
                         .mapNotNull { it.firstOrNull()?.toString() }
                         .joinToString("")
@@ -148,30 +209,31 @@ class DashboardActivity : Activity() {
         })
     }
 
-    private fun fetchUpcomingSessions(token: String) {
+    private fun fetchAllSessions(token: String) {
+        val progress = findViewById<ProgressBar>(R.id.progress_dashboard)
+        progress.visibility = View.VISIBLE
+        tvEmptyState.visibility = View.GONE
+
         SessionApi.getSessions(token, object : ApiClient.ApiCallback<SessionResponse> {
             override fun onSuccess(result: SessionResponse) {
                 runOnUiThread {
+                    progress.visibility = View.GONE
                     if (result.success && result.data != null) {
-                        // Parity with Web: Slice(0, 4)
-                        sessionAdapter.updateData(result.data.sessions.take(4))
+                        allSessions = result.data.sessions
+                        applyFilters()
+                    } else {
+                        tvEmptyState.visibility = View.VISIBLE
                     }
                 }
             }
-            override fun onError(error: String) {}
+            override fun onError(error: String) {
+                runOnUiThread {
+                    progress.visibility = View.GONE
+                    tvEmptyState.visibility = View.VISIBLE
+                    tvEmptyState.text = "Failed to load sessions."
+                }
+            }
         })
-    }
-
-    private fun formatDate(dateStr: String?): String {
-        if (dateStr.isNullOrEmpty()) return "—"
-        return try {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("MMMM d, yyyy", Locale.getDefault())
-            val date = inputFormat.parse(dateStr)
-            outputFormat.format(date!!)
-        } catch (e: Exception) {
-            dateStr
-        }
     }
 
     private fun goToLogin() {

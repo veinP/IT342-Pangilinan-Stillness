@@ -65,41 +65,7 @@ object ApiClient {
         })
     }
 
-    fun googleLogin(idToken: String, callback: ApiCallback<LoginResponse>) {
-        val json = JsonObject()
-        json.addProperty("idToken", idToken)
-        val body = json.toString().toRequestBody(JSON_MEDIA)
 
-        val request = Request.Builder()
-            .url("$BASE_URL/auth/google")
-            .post(body)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callback.onError("Network error: ${e.message}")
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string() ?: ""
-                if (response.isSuccessful) {
-                    try {
-                        val loginResponse = gson.fromJson(responseBody, LoginResponse::class.java)
-                        callback.onSuccess(loginResponse)
-                    } catch (e: Exception) {
-                        callback.onError("Failed to parse response")
-                    }
-                } else {
-                    try {
-                        val loginResponse = gson.fromJson(responseBody, LoginResponse::class.java)
-                        callback.onError(loginResponse.error?.message ?: "Google login failed")
-                    } catch (e: Exception) {
-                        callback.onError("Google login failed (${response.code})")
-                    }
-                }
-            }
-        })
-    }
 
     fun register(
         fullName: String,

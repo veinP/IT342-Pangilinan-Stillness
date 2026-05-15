@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Stillness Session Card — Pixel-match with Web .sn-card -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/white">
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/white"
+    app:strokeColor="#E0E7FF"
+    app:strokeWidth="1dp"
+    app:cardUseCompatPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Card Thumbnail Placeholder (Parity with Web sn-card__thumb) -->
+        <!-- Card Thumbnail (Parity with Web .sn-card__thumb h=192) -->
         <FrameLayout
             android:id="@+id/flSessionThumb"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="140dp"
             android:background="#BFDBFE">
 
             <TextView
@@ -27,17 +30,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Meditation Session"
-                android:textColor="@color/stillness_blue_primary"
-                android:textSize="14sp"
+                android:textColor="#3B82F6"
+                android:alpha="0.6"
+                android:textSize="16sp"
                 android:textStyle="bold" />
         </FrameLayout>
 
+        <!-- Card Body (Parity with Web .sn-card__body) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="20dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="20dp">
 
+            <!-- Top Row: Title + Category Tag (Web .sn-card__top-row) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,9 +58,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Morning Yoga Flow"
-                    android:textColor="@color/black"
+                    android:textColor="#1E3A5F"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:lineSpacingExtra="4dp" />
 
                 <TextView
                     android:id="@+id/tvSessionCategory"
@@ -60,29 +69,30 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:background="@drawable/bg_hg_rounded"
-                    android:backgroundTint="#F0F7FF"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="4dp"
-                    android:text="YOGA"
-                    android:textColor="@color/stillness_blue_primary"
+                    android:backgroundTint="#EFF6FF"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
+                    android:text="Meditation"
+                    android:textColor="#3B82F6"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <!-- Instructor (Web .sn-card__instructor) -->
             <TextView
                 android:id="@+id/tvSessionInstructor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="with John Doe"
-                android:textColor="@color/text_secondary"
+                android:layout_marginTop="6dp"
+                android:text="with Instructor"
+                android:textColor="#64748B"
                 android:textSize="14sp" />
 
-            <!-- Time Row (Parity with Web sn-card__time) -->
+            <!-- Time Row (Web .sn-card__time) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -90,7 +100,7 @@
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:src="@android:drawable/ic_menu_recent_history"
-                    app:tint="@color/text_slate_500" />
+                    app:tint="#94A3B8" />
 
                 <TextView
                     android:id="@+id/tvSessionDate"
@@ -98,11 +108,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
                     android:text="Mon, Oct 27 • 10:00 AM"
-                    android:textColor="@color/text_slate_500"
+                    android:textColor="#64748B"
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Spots Row (Parity with Web sn-card__spots) -->
+            <!-- Spots Row (Web .sn-card__spots) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -128,18 +138,19 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <!-- Reserve Button (Web .sn-card__reserve) -->
             <TextView
                 android:id="@+id/btnReserve"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
                 android:background="@drawable/bg_button_primary"
                 android:gravity="center"
-                android:paddingVertical="10dp"
                 android:text="Reserve Spot"
                 android:textColor="@color/white"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

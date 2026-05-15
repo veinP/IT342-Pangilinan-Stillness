@@ -30,7 +30,7 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             client-name: Google
-            redirect-uri: "http://localhost:8080/api/v1/login/oauth2/code/google"
+            redirect-uri: "${OAUTH2_REDIRECT_URI:http://localhost:8080/api/v1/login/oauth2/code/google}"
             scope: email, profile, openid
             authorization-grant-type: authorization_code
         provider:
@@ -63,7 +63,7 @@ spring:
       max-request-size: 10MB
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:${SERVER_PORT:8080}}
   address: 0.0.0.0
   servlet:
     context-path: /api/v1
@@ -77,4 +77,4 @@ app:
     secret-key: ${STRIPE_SECRET_KEY}
   file:
     upload-dir: ${FILE_UPLOAD_DIR:uploads}
-  frontend-url: http://localhost:3000
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}

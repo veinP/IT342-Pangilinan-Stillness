@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Bottom layer: solid color -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#dce8fb" />
+        </shape>
+    </item>
+
+    <!-- Middle layer: large faint ripple shape -->
+    <item
+        android:width="400dp"
+        android:height="400dp"
+        android:gravity="center">
+        <shape android:shape="oval">
+            <!-- #3b6fd4 at 8% opacity (~14 hex) -->
+            <solid android:color="#143b6fd4" />
+        </shape>
+    </item>
+
+    <!-- Top layer: Logo -->
+    <item android:gravity="center">
+        <bitmap
+            android:src="@drawable/logo"
+            android:gravity="center" />
+    </item>
+</layer-list>

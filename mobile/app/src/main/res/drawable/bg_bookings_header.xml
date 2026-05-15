@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Parity with Web .mb-header-section: gradient blue-purple, rounded, border -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="135"
+        android:startColor="#E0F2FE"
+        android:endColor="#F0E7FF" />
+    <corners android:radius="12dp" />
+    <stroke
+        android:width="1dp"
+        android:color="#BFDBFE" />
+</shape>

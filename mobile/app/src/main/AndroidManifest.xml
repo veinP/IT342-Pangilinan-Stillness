@@ -9,9 +9,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.Stillness"
         android:usesCleartextTraffic="true"
@@ -35,5 +35,7 @@
         <activity android:name=".features.sessions.SessionsActivity" android:exported="false" />
         <activity android:name=".features.sessions.SessionDetailActivity" android:exported="false" />
         <activity android:name=".features.bookings.MyBookingsActivity" android:exported="false" />
+        <activity android:name=".features.bookings.BookingCheckoutActivity" android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".features.landing.LandingActivity" android:exported="false" />
     </application></manifest>

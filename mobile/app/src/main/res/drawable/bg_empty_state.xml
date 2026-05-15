@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Parity with Web .mb-empty-state: dashed border, light bg, rounded -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#F8FBFF" />
+    <corners android:radius="14dp" />
+    <stroke
+        android:width="1dp"
+        android:color="#BFDBFE"
+        android:dashWidth="6dp"
+        android:dashGap="4dp" />
+</shape>

@@ -2,7 +2,9 @@ package edu.cit.pangilinan.stillness.features.sessions
 
 import edu.cit.pangilinan.stillness.R
 
+import edu.cit.pangilinan.stillness.features.auth.LoginActivity
 import edu.cit.pangilinan.stillness.shared.api.ApiClient
+import edu.cit.pangilinan.stillness.shared.auth.SessionManager
 
 
 import android.content.Intent
@@ -29,6 +31,14 @@ class SessionsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Auth guard — Parity with Web ProtectedRoute
+        if (!SessionManager.isLoggedIn(this)) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_sessions)
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
@@ -84,10 +94,10 @@ class SessionsActivity : AppCompatActivity() {
 
         val filteredList = allSessions.filter { session ->
             val matchesSearch = session.title.lowercase(Locale.ROOT).contains(query) || 
-                               session.instructorName.lowercase(Locale.ROOT).contains(query)
+                               session.resolvedInstructorName().lowercase(Locale.ROOT).contains(query)
             
             val matchesCategory = selectedCategory == "All Categories" || 
-                                 session.category.equals(selectedCategory, ignoreCase = true)
+                                 session.resolvedType().equals(selectedCategory, ignoreCase = true)
             
             matchesSearch && matchesCategory
         }
@@ -95,8 +105,7 @@ class SessionsActivity : AppCompatActivity() {
     }
 
     private fun fetchSessions() {
-        val sharedPrefs = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
-        val token = sharedPrefs.getString("token", null)
+        val token = SessionManager.getToken(this)
 
         val progressBar = findViewById<android.widget.ProgressBar>(R.id.progressBar)
         

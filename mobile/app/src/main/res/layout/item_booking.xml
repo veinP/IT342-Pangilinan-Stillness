@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Stillness Booking Card — Parity with Web BookingCard (.mb-card) -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
+    android:layout_marginBottom="12dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/white">
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/white"
+    app:strokeColor="#E2E8F0"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Booking Thumbnail (Parity with Web mb-card__thumb) -->
+        <!-- Booking Status Thumb (Parity with Web .mb-card__thumb) -->
         <FrameLayout
             android:id="@+id/flBookingThumb"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="48dp"
             android:background="#F0FDF4">
 
             <TextView
@@ -32,12 +34,16 @@
                 android:textStyle="bold" />
         </FrameLayout>
 
+        <!-- Card Content (Parity with Web .mb-card__content) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="16dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="16dp">
 
+            <!-- Title Row: Title + Category Badge (Web .mb-card__title-row) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,8 +56,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Session Title"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -60,97 +66,169 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:background="@drawable/bg_hg_rounded"
-                    android:backgroundTint="#F0F7FF"
-                    android:paddingHorizontal="8dp"
+                    android:backgroundTint="#DBEAFE"
+                    android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
-                    android:text="YOGA"
-                    android:textColor="@color/stillness_blue_primary"
+                    android:text="Meditation"
+                    android:textColor="#0284C7"
                     android:textSize="11sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Meta Rows (Parity with Web mb-card__meta-row) -->
+            <!-- Meta Rows (Web .mb-card__meta-row) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
+                <!-- Date -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical">
-                    <ImageView android:layout_width="14dp" android:layout_height="14dp" android:src="@android:drawable/ic_menu_my_calendar" app:tint="@color/text_secondary" />
-                    <TextView android:id="@+id/tvBookingDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="Mon, Oct 27, 2026" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@android:drawable/ic_menu_my_calendar"
+                        app:tint="#64748B" />
+                    <TextView
+                        android:id="@+id/tvBookingDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Mon, Oct 27, 2026"
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
                 </LinearLayout>
 
+                <!-- Time -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:gravity="center_vertical">
-                    <ImageView android:layout_width="14dp" android:layout_height="14dp" android:src="@android:drawable/ic_menu_recent_history" app:tint="@color/text_secondary" />
-                    <TextView android:id="@+id/tvBookingTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="10:00 AM - 11:00 AM" android:textColor="@color/text_secondary" android:textSize="13sp" />
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@android:drawable/ic_menu_recent_history"
+                        app:tint="#64748B" />
+                    <TextView
+                        android:id="@+id/tvBookingTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="10:00 AM - 11:00 AM"
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- Divider -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginVertical="16dp"
-                android:background="@color/border_divider" />
+                android:layout_marginVertical="14dp"
+                android:background="#E2E8F0" />
 
-            <!-- Details Section (Parity with Web mb-card__details) -->
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:columnCount="2"
-                android:alignmentMode="alignMargins">
-
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Booking #:" android:textColor="@color/text_secondary" android:textSize="12sp" android:textStyle="bold" />
-                <TextView android:id="@+id/tvBookingNumber" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:textColor="@color/black" android:textSize="12sp" />
-
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Amount:" android:textColor="@color/text_secondary" android:textSize="12sp" android:textStyle="bold" />
-                <TextView android:id="@+id/tvBookingPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:layout_marginTop="4dp" android:textColor="@color/black" android:textSize="12sp" />
-
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Payment:" android:textColor="@color/text_secondary" android:textSize="12sp" android:textStyle="bold" />
-                <TextView android:id="@+id/tvPaymentStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:layout_marginTop="4dp" android:text="PAID" android:textColor="#15803D" android:textSize="12sp" android:textStyle="bold" />
-            </GridLayout>
-
-            <!-- Actions Section (Parity with Web mb-card__actions) -->
+            <!-- Details Section (Web .mb-card__details) — pill style -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <!-- Booking # pill -->
+                <TextView
+                    android:id="@+id/tvBookingNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_detail_pill"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="#BK-001"
+                    android:textColor="#475569"
+                    android:textSize="12sp" />
+
+                <!-- Amount pill -->
+                <TextView
+                    android:id="@+id/tvBookingPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_detail_pill"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="Free"
+                    android:textColor="#475569"
+                    android:textSize="12sp" />
+
+                <!-- Payment pill -->
+                <TextView
+                    android:id="@+id/tvPaymentStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@drawable/bg_detail_pill"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="Paid"
+                    android:textColor="#15803D"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Actions Row (Web .mb-card__actions) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <!-- Status Pill -->
                 <TextView
                     android:id="@+id/tvBookingStatusPill"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_hg_rounded"
-                    android:backgroundTint="#F0FDF4"
+                    android:background="@drawable/bg_status_pill"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="6dp"
-                    android:text="CONFIRMED"
-                    android:textColor="#15803D"
+                    android:text="Confirmed"
+                    android:textColor="#166534"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
-                <View android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
 
+                <!-- View Details Button (Web .mb-view-btn) -->
                 <TextView
                     android:id="@+id/btnViewSessionDetails"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_button_primary"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="10dp"
                     android:text="View Details"
-                    android:textColor="@color/stillness_blue_primary"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:padding="8dp" />
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <!-- Cancel Button -->
+                <TextView
+                    android:id="@+id/btnCancelBooking"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:padding="8dp"
+                    android:text="Cancel"
+                    android:textColor="#64748B"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

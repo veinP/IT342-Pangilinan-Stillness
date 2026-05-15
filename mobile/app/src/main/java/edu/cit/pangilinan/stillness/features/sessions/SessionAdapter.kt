@@ -43,7 +43,28 @@ class SessionAdapter(
 
         holder.tvTitle.text = session.title ?: "Untitled Session"
         holder.tvInstructor.text = "with ${session.instructorName ?: "Instructor"}"
-        holder.tvCategory.text = (session.category ?: "General").uppercase(Locale.ROOT)
+        // Category tag (Parity with Web getTagLabel / getTagClass helpers)
+        val categoryLower = (session.category ?: "").lowercase()
+        val tagLabel = when {
+            categoryLower.contains("yoga") -> "Yoga"
+            categoryLower.contains("breath") -> "Breathwork"
+            else -> "Meditation"
+        }
+        holder.tvCategory.text = tagLabel
+
+        // Tag color (Parity with Web .sn-card__tag--* colors)
+        val tagBgColor = when {
+            categoryLower.contains("yoga") -> "#F0F9FF"       // yoga bg
+            categoryLower.contains("breath") -> "#FFF7ED"     // breathwork bg
+            else -> "#EFF6FF"                                 // meditation bg
+        }
+        val tagTextColor = when {
+            categoryLower.contains("yoga") -> "#0EA5E9"
+            categoryLower.contains("breath") -> "#EA580C"
+            else -> "#3B82F6"
+        }
+        holder.tvCategory.backgroundTintList = ColorStateList.valueOf(Color.parseColor(tagBgColor))
+        holder.tvCategory.setTextColor(Color.parseColor(tagTextColor))
         
         // Formatting date/time to match web app fmtTime helper
         holder.tvDate.text = formatSessionTime(session.date ?: "", session.startTime ?: "")
@@ -63,7 +84,6 @@ class SessionAdapter(
         ImageViewCompat.setImageTintList(holder.ivSpotsIcon, ColorStateList.valueOf(colorInt))
 
         // Thumbnail text (Parity with Web getThumbLabel helper)
-        val categoryLower = (session.category ?: "").lowercase()
         holder.tvThumbText.text = when {
             categoryLower.contains("yoga") -> "Yoga Session"
             categoryLower.contains("breath") -> "Breathwork Session"

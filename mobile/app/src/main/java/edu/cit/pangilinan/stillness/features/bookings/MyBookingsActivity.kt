@@ -5,19 +5,19 @@ import edu.cit.pangilinan.stillness.R
 import edu.cit.pangilinan.stillness.features.auth.LoginActivity
 import edu.cit.pangilinan.stillness.features.sessions.SessionsActivity
 import edu.cit.pangilinan.stillness.shared.api.ApiClient
+import edu.cit.pangilinan.stillness.shared.auth.SessionManager
 
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.tabs.TabLayout
 import edu.cit.pangilinan.stillness.features.bookings.BookingApi
 import edu.cit.pangilinan.stillness.model.ListBookingResponse
@@ -27,10 +27,9 @@ import java.util.*
 
 class MyBookingsActivity : AppCompatActivity() {
     private lateinit var bookingAdapter: BookingAdapter
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var tabLayout: TabLayout
     private lateinit var layoutEmptyState: LinearLayout
-    private lateinit var tvFeaturedHeader: TextView
+    private lateinit var layoutFeaturedHeader: LinearLayout
     
     private var allBookings: List<BookingDto> = emptyList()
 
@@ -43,26 +42,21 @@ class MyBookingsActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbarBookings)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = ""
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        // ═══ Navbar ═══
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
+            onBackPressed()
+        }
 
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutBookings)
+        // ═══ Tabs (Parity with Web mb-tabs: Upcoming / Past Bookings) ═══
         tabLayout = findViewById(R.id.tabsBookings)
         layoutEmptyState = findViewById(R.id.layoutEmptyState)
-        tvFeaturedHeader = findViewById(R.id.tvFeaturedHeader)
+        layoutFeaturedHeader = findViewById(R.id.layoutFeaturedHeader)
         
         val recyclerView = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerViewBookings)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         bookingAdapter = BookingAdapter(emptyList())
         recyclerView.adapter = bookingAdapter
-
-        swipeRefreshLayout.setOnRefreshListener {
-            fetchBookings()
-        }
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -72,6 +66,7 @@ class MyBookingsActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
 
+        // ═══ Empty State Browse button ═══
         findViewById<Button>(R.id.btnBrowseSessions).setOnClickListener {
             startActivity(Intent(this, SessionsActivity::class.java))
             finish()
@@ -85,7 +80,7 @@ class MyBookingsActivity : AppCompatActivity() {
 
         val filtered = allBookings.filter { booking ->
             try {
-                val sessionDate = sdf.parse(booking.session.date)?.time ?: 0
+                val sessionDate = sdf.parse(booking.session.resolvedDate())?.time ?: 0
                 if (isUpcomingTab) sessionDate >= now - (24 * 60 * 60 * 1000) // Today or later
                 else sessionDate < now - (24 * 60 * 60 * 1000)
             } catch (e: Exception) {
@@ -96,18 +91,17 @@ class MyBookingsActivity : AppCompatActivity() {
         if (filtered.isEmpty()) {
             layoutEmptyState.visibility = View.VISIBLE
             bookingAdapter.updateData(emptyList())
-            tvFeaturedHeader.visibility = View.GONE
+            layoutFeaturedHeader.visibility = View.GONE
         } else {
             layoutEmptyState.visibility = View.GONE
             bookingAdapter.updateData(filtered)
-            // Show "Latest confirmed booking" header only on upcoming tab if bookings exist
-            tvFeaturedHeader.visibility = if (isUpcomingTab && filtered.isNotEmpty()) View.VISIBLE else View.GONE
+            // Show "Latest confirmed booking" header only on upcoming tab
+            layoutFeaturedHeader.visibility = if (isUpcomingTab && filtered.isNotEmpty()) View.VISIBLE else View.GONE
         }
     }
 
     private fun fetchBookings() {
-        val sharedPrefs = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
-        val token = sharedPrefs.getString("token", null)
+        val token = SessionManager.getToken(this)
 
         if (token == null) {
             Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show()
@@ -117,15 +111,12 @@ class MyBookingsActivity : AppCompatActivity() {
         }
 
         val progressBar = findViewById<android.widget.ProgressBar>(R.id.progressBarBookings)
-        if (!swipeRefreshLayout.isRefreshing) {
-            progressBar.visibility = View.VISIBLE
-        }
+        progressBar.visibility = View.VISIBLE
 
         BookingApi.getMyBookings(token, object : ApiClient.ApiCallback<ListBookingResponse> {
             override fun onSuccess(result: ListBookingResponse) {
                 runOnUiThread {
                     progressBar.visibility = View.GONE
-                    swipeRefreshLayout.isRefreshing = false
                     allBookings = result.data ?: emptyList()
                     applyTabFilter()
                 }
@@ -134,7 +125,6 @@ class MyBookingsActivity : AppCompatActivity() {
             override fun onError(error: String) {
                 runOnUiThread {
                     progressBar.visibility = View.GONE
-                    swipeRefreshLayout.isRefreshing = false
                     Toast.makeText(this@MyBookingsActivity, error, Toast.LENGTH_LONG).show()
                 }
             }

@@ -3,19 +3,17 @@ package edu.cit.pangilinan.stillness.features.landing
 import edu.cit.pangilinan.stillness.R
 
 import edu.cit.pangilinan.stillness.features.auth.LoginActivity
+import edu.cit.pangilinan.stillness.features.auth.RegisterActivity
 import edu.cit.pangilinan.stillness.features.dashboard.DashboardActivity
 import edu.cit.pangilinan.stillness.features.dashboard.QuoteApi
 import edu.cit.pangilinan.stillness.features.sessions.SessionAdapter
 import edu.cit.pangilinan.stillness.features.sessions.SessionApi
-import edu.cit.pangilinan.stillness.features.sessions.SessionDetailActivity
-import edu.cit.pangilinan.stillness.features.sessions.SessionsActivity
 import edu.cit.pangilinan.stillness.shared.api.ApiClient
 import edu.cit.pangilinan.stillness.shared.auth.SessionManager
 
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -44,30 +42,39 @@ class LandingActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_landing)
 
+        // Bind views
         tvQuoteText = findViewById(R.id.tvQuoteText)
         tvQuoteAuthor = findViewById(R.id.tvQuoteAuthor)
         btnRefreshQuote = findViewById(R.id.btnRefreshQuote)
         rvUpcomingSessions = findViewById(R.id.rvUpcomingSessions)
 
-        // Setup Buttons
-        findViewById<Button>(R.id.btnViewSessions).setOnClickListener {
-            startActivity(Intent(this, SessionsActivity::class.java))
+        // ═══ Navbar Buttons (Parity with Web AppNav guest mode) ═══
+        findViewById<Button>(R.id.btnNavLogin).setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+        findViewById<Button>(R.id.btnNavSignUp).setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
+        // ═══ Hero CTA Buttons ═══
+        // Parity with Web: Browse Sessions links to /login when user is null
+        findViewById<Button>(R.id.btnViewSessions).setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+        // Sign In with Email button
         findViewById<Button>(R.id.btnLogin).setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
-        // Setup RecyclerView for Upcoming Sessions (Parity with Web "Upcoming Sessions" section)
+        // ═══ Sessions RecyclerView (Parity with Web "Upcoming Sessions" .slice(0, 3)) ═══
         rvUpcomingSessions.layoutManager = LinearLayoutManager(this)
-        sessionAdapter = SessionAdapter(emptyList()) { session ->
-            val intent = Intent(this, SessionDetailActivity::class.java)
-            intent.putExtra("SESSION_JSON", com.google.gson.Gson().toJson(session))
-            startActivity(intent)
+        // Parity with Web: Reserve Spot links to /login when user is null
+        sessionAdapter = SessionAdapter(emptyList()) { _ ->
+            startActivity(Intent(this, LoginActivity::class.java))
         }
         rvUpcomingSessions.adapter = sessionAdapter
 
-        // Load Initial Data
+        // ═══ Load Data ═══
         fetchQuote()
         fetchUpcomingSessions()
 
@@ -91,7 +98,7 @@ class LandingActivity : AppCompatActivity() {
 
             override fun onError(error: String) {
                 runOnUiThread {
-                    tvQuoteText.text = "Focus on the present moment."
+                    tvQuoteText.text = "\"Focus on the present moment.\""
                     tvQuoteAuthor.text = "— StillNess"
                 }
             }
