@@ -13,8 +13,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
 object ApiClient {
-    // Updated with your actual computer IP from ipconfig
-    const val BASE_URL = "http://192.168.254.159:8080/api/v1"
+    // Production backend on Render
+    const val BASE_URL = "https://it342-pangilinan-stillness.onrender.com/api/v1"
     
     private val JSON_MEDIA = "application/json; charset=utf-8".toMediaType()
     private val client = OkHttpClient()
