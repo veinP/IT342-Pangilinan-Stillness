@@ -24,11 +24,7 @@ public class StripePaymentStrategy implements PaymentStrategy {
                             .setPaymentMethod(paymentMethodId)
                             .addPaymentMethodType("card")
                             .setConfirm(true)
-                            .setAutomaticPaymentMethods(
-                                    PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
-                                            .setEnabled(false)
-                                            .build()
-                            )
+                            .setOffSession(true)
                             .build()
             );
             return PaymentResult.success(intent.getId(), amount, paymentMethodId);
