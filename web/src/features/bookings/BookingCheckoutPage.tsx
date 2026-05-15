@@ -151,12 +151,12 @@ export default function BookingCheckoutPage() {
         await bookingsApi.confirmPayment(booking.paymentIntentId ?? buildPaymentIntentId(), booking.id);
       }
 
+      setProcessing(false);
       setConfirmationMessage(`Booking confirmed for ${session.title}.`);
-      navigate('/bookings');
+      setTimeout(() => navigate('/bookings'), 3000);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unable to complete booking.';
       setSubmitError(message);
-    } finally {
       setProcessing(false);
     }
   };
@@ -367,6 +367,23 @@ export default function BookingCheckoutPage() {
           </form>
         </aside>
       </div>
+
+      {confirmationMessage && (
+        <div className="bc-success-overlay">
+          <div className="bc-success-modal">
+            <div className="bc-success-icon">
+              <svg viewBox="0 0 52 52" width="64" height="64">
+                <circle cx="26" cy="26" r="24" fill="none" stroke="#22c55e" strokeWidth="3" />
+                <path fill="none" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M14 27l8 8 16-16" />
+              </svg>
+            </div>
+            <h2 className="bc-success-title">Booking Confirmed!</h2>
+            <p className="bc-success-text">{confirmationMessage}</p>
+            <p className="bc-success-subtext">Redirecting to your bookings...</p>
+            <button className="bc-success-btn" onClick={() => navigate('/bookings')}>View My Bookings</button>
+          </div>
+        </div>
+      )}
 
       <footer className="bc-footer">
         <span className="bc-footer__copy">© 2026 StillNess. All rights reserved.</span>
