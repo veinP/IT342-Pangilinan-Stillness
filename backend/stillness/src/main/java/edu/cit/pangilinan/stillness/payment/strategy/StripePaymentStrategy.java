@@ -20,7 +20,7 @@ public class StripePaymentStrategy implements PaymentStrategy {
             PaymentIntent intent = PaymentIntent.create(
                     PaymentIntentCreateParams.builder()
                             .setAmount(amount.multiply(BigDecimal.valueOf(100)).longValue())
-                            .setCurrency("php")
+                            .setCurrency("usd")
                             .setPaymentMethod(paymentMethodId)
                             .addPaymentMethodType("card")
                             .setConfirm(true)
