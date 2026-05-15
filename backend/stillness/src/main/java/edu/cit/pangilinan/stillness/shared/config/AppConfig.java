@@ -11,7 +11,7 @@ public class AppConfig {
 
     private final String stripeApiKey;
 
-    public AppConfig(@Value("${stripe.api.key:}") String stripeApiKey) {
+    public AppConfig(@Value("${app.stripe.secret-key:}") String stripeApiKey) {
         this.stripeApiKey = stripeApiKey;
     }
 

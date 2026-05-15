@@ -17,7 +17,11 @@ object ApiClient {
     const val BASE_URL = "https://it342-pangilinan-stillness.onrender.com/api/v1"
     
     private val JSON_MEDIA = "application/json; charset=utf-8".toMediaType()
-    private val client = OkHttpClient()
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+        .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+        .build()
     private val gson = Gson()
 
     interface ApiCallback<T> {

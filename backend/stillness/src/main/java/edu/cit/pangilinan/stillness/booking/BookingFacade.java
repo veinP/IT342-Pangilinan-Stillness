@@ -8,6 +8,7 @@ import edu.cit.pangilinan.stillness.session.dto.SessionDetailDto;
 import edu.cit.pangilinan.stillness.shared.model.User;
 import edu.cit.pangilinan.stillness.booking.BookingService;
 import edu.cit.pangilinan.stillness.session.SessionService;
+import edu.cit.pangilinan.stillness.payment.PaymentService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,15 +19,18 @@ public class BookingFacade {
     private final SessionService sessionService;
     private final PaymentContext paymentContext;
     private final BookingService bookingService;
+    private final PaymentService paymentService;
 
     public BookingFacade(
             SessionService sessionService,
             PaymentContext paymentContext,
-            BookingService bookingService
+            BookingService bookingService,
+            PaymentService paymentService
     ) {
         this.sessionService = sessionService;
         this.paymentContext = paymentContext;
         this.bookingService = bookingService;
+        this.paymentService = paymentService;
     }
 
     public BookingDto completeBooking(User currentUser, CreateBookingRequest request) {
@@ -41,17 +45,31 @@ public class BookingFacade {
         }
 
         BigDecimal amount = session.getPrice() != null ? session.getPrice() : BigDecimal.ZERO;
-        
-        // For non-free sessions, skip Stripe payment for now (test mode)
-        // In production, implement proper Stripe client secret flow
+
+        // Process payment via Stripe for paid sessions
+        String paymentIntentId = null;
         if (amount.compareTo(BigDecimal.ZERO) > 0) {
-            // For sandbox/test: just log the payment intent and continue
-            System.out.println("TEST MODE: Processing payment of " + amount + " PHP for session " + request.getSessionId());
+            PaymentResult result = paymentContext.executePayment(
+                    currentUser.getId(),
+                    amount,
+                    "pm_card_visa" // Stripe test payment method
+            );
+            paymentIntentId = result.getPaymentReference();
         }
         
         BookingDto booking = bookingService.createBooking(request, currentUser);
         if (booking == null || booking.getId() == null) {
             throw new IllegalStateException("Booking could not be created");
+        }
+
+        // If payment was processed, confirm it and link to booking
+        if (paymentIntentId != null) {
+            try {
+                paymentService.confirmPayment(paymentIntentId, "txn_" + System.currentTimeMillis());
+            } catch (Exception e) {
+                // Payment confirmation is best-effort; booking is already created
+                System.err.println("Payment confirmation warning: " + e.getMessage());
+            }
         }
 
         return booking;
