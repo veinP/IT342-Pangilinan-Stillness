@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card"
+    android:elevation="2dp"
+    android:layout_marginBottom="12dp"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Session Title"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_main" />
+
+    <TextView
+        android:id="@+id/tv_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Type | Location | Time"
+        android:textSize="14sp"
+        android:textColor="@color/text_secondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btn_attendees"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attendees"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/stillness_blue_primary" />
+
+        <Button
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/text_main" />
+
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@color/red_error_text" />
+
+    </LinearLayout>
+</LinearLayout>

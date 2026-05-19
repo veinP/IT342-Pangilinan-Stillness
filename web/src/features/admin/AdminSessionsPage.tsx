@@ -20,6 +20,7 @@ interface SessionFormState {
   endDate: string;
   endTime: string;
   thumbnail: File | null;
+  existingThumbnailUrl: string | null;
 }
 
 const initialFormState: SessionFormState = {
@@ -35,6 +36,7 @@ const initialFormState: SessionFormState = {
   endDate: '',
   endTime: '',
   thumbnail: null,
+  existingThumbnailUrl: null,
 };
 
 export default function AdminSessionsPage() {
@@ -101,6 +103,7 @@ export default function AdminSessionsPage() {
         endDate: new Date(session.endTime).toISOString().split('T')[0],
         endTime: new Date(session.endTime).toTimeString().slice(0, 5),
         thumbnail: null,
+        existingThumbnailUrl: session.thumbnailUrl || null,
       });
     } else {
       setEditingId(null);
@@ -170,10 +173,22 @@ export default function AdminSessionsPage() {
         location: form.location.trim(),
       };
 
+      let savedSession;
       if (editingId) {
-        await sessionsApi.updateSession(editingId, payload);
+        savedSession = await sessionsApi.updateSession(editingId, payload);
       } else {
-        await sessionsApi.createSession(payload);
+        savedSession = await sessionsApi.createSession(payload);
+      }
+
+      // Upload thumbnail if a file was selected
+      if (form.thumbnail && savedSession?.id) {
+        try {
+          await sessionsApi.uploadSessionThumbnail(savedSession.id, form.thumbnail);
+        } catch (uploadErr) {
+          console.warn('Thumbnail upload failed:', uploadErr);
+          // Session was saved; warn but don't block
+          setMessage({ type: 'success', text: (editingId ? 'Session updated' : 'Session created') + ' (thumbnail upload failed)' });
+        }
       }
 
       const refreshedSessions = await adminApi.getAdminSessions();
@@ -322,7 +337,11 @@ export default function AdminSessionsPage() {
                 <tr key={session.id} className="sessions-table-row">
                   <td>
                     <div className="session-cell">
-                      <div className="table-avatar">{session.type.slice(0, 2)}</div>
+                      {session.thumbnailUrl ? (
+                        <img src={session.thumbnailUrl} alt="" className="table-avatar-img" />
+                      ) : (
+                        <div className="table-avatar">{session.type.slice(0, 2)}</div>
+                      )}
                       <div>
                         <div className="session-title">{session.title}</div>
                         <div className="session-location">{session.location}</div>
@@ -494,9 +513,18 @@ export default function AdminSessionsPage() {
 
               <div className="session-modal__field">
                 <label htmlFor="thumbnail">Session Thumbnail</label>
+                {(form.existingThumbnailUrl || form.thumbnail) && (
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    <img
+                      src={form.thumbnail ? URL.createObjectURL(form.thumbnail) : (form.existingThumbnailUrl ?? undefined)}
+                      alt="Thumbnail preview"
+                      style={{ maxWidth: '200px', maxHeight: '120px', borderRadius: '8px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)' }}
+                    />
+                  </div>
+                )}
                 <label className="session-modal__upload" htmlFor="thumbnail">
                   <span className="session-modal__upload-icon">📤</span>
-                  <span>Click to upload or drag and drop</span>
+                  <span>{form.thumbnail ? 'Change image' : (form.existingThumbnailUrl ? 'Replace image' : 'Click to upload or drag and drop')}</span>
                   <small>JPEG, PNG - max 5MB</small>
                   {form.thumbnail ? <em>✓ {form.thumbnail.name}</em> : null}
                 </label>

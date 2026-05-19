@@ -8,9 +8,14 @@ import edu.cit.pangilinan.stillness.shared.api.ApiClient
 import edu.cit.pangilinan.stillness.shared.auth.SessionManager
 
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.view.Window
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -19,6 +24,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
+import edu.cit.pangilinan.stillness.features.dashboard.DashboardActivity
+import edu.cit.pangilinan.stillness.model.User
+
 import edu.cit.pangilinan.stillness.features.bookings.BookingApi
 import edu.cit.pangilinan.stillness.model.ListBookingResponse
 import edu.cit.pangilinan.stillness.model.BookingDto
@@ -43,8 +51,17 @@ class MyBookingsActivity : AppCompatActivity() {
 
     private fun setupUI() {
         // ═══ Navbar ═══
-        findViewById<ImageButton>(R.id.btnBack).setOnClickListener {
-            onBackPressed()
+        findViewById<TextView>(R.id.btnNavSessions).setOnClickListener {
+            val intent = Intent(this, DashboardActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            startActivity(intent)
+            overridePendingTransition(0, 0)
+        }
+        findViewById<TextView>(R.id.btnNavBookings).setOnClickListener {
+            // Already on My Bookings
+        }
+        findViewById<TextView>(R.id.nav_logout).setOnClickListener {
+            showLogoutDialog()
         }
 
         // ═══ Tabs (Parity with Web mb-tabs: Upcoming / Past Bookings) ═══
@@ -129,5 +146,62 @@ class MyBookingsActivity : AppCompatActivity() {
                 }
             }
         })
+        
+        loadProfile(token)
+    }
+
+    private fun loadProfile(token: String) {
+        ApiClient.getProfile(token, object : ApiClient.ApiCallback<User> {
+            override fun onSuccess(result: User) {
+                runOnUiThread {
+                    val firstName = result.fullName.split(" ").firstOrNull() ?: "User"
+                    findViewById<TextView>(R.id.nav_welcome)?.text = firstName
+                    
+                    findViewById<TextView>(R.id.tv_avatar_initials)?.text = result.fullName.split(" ")
+                        .mapNotNull { it.firstOrNull()?.toString() }
+                        .joinToString("")
+                        .take(2)
+                        .uppercase()
+                }
+            }
+            override fun onError(error: String) {
+                runOnUiThread {
+                    if (error.contains("401") || error.contains("403")) {
+                        SessionManager.clearSession(this@MyBookingsActivity)
+                        goToLogin()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun showLogoutDialog() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.dialog_logout)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setGravity(Gravity.CENTER)
+
+        val btnLogout = dialog.findViewById<Button>(R.id.btn_logout_confirm)
+        val btnCancel = dialog.findViewById<Button>(R.id.btn_logout_cancel)
+
+        btnLogout.setOnClickListener {
+            SessionManager.clearSession(this)
+            goToLogin()
+            dialog.dismiss()
+        }
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        dialog.show()
     }
 }

@@ -45,7 +45,7 @@ public class Session {
     @Column(precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "thumbnail_url")
+    @Column(name = "thumbnail_url", columnDefinition = "TEXT")
     private String thumbnailUrl;
 
     private String location;
