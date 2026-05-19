@@ -198,8 +198,15 @@ export default function LandingPage() {
               <article key={s.id} className="sn-card">
 
                 {/* Thumbnail */}
-                <div className="sn-card__thumb" style={{ background: getThumbBg() }}>
-                  <span className="sn-card__thumb-text">{getThumbLabel(s.type)}</span>
+                <div
+                  className="sn-card__thumb"
+                  style={{
+                    background: s.thumbnailUrl
+                      ? `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5)), url(${s.thumbnailUrl}) center/cover no-repeat`
+                      : getThumbBg(),
+                  }}
+                >
+                  {!s.thumbnailUrl && <span className="sn-card__thumb-text">{getThumbLabel(s.type)}</span>}
                 </div>
 
                 {/* Body */}

@@ -21,7 +21,8 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:theme="@style/Theme.Stillness.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -38,4 +39,7 @@
         <activity android:name=".features.bookings.BookingCheckoutActivity" android:exported="false"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".features.landing.LandingActivity" android:exported="false" />
+        <activity android:name=".features.admin.AdminSessionsActivity" android:exported="false" />
+        <activity android:name=".features.admin.AdminPaymentsActivity" android:exported="false" />
+        <activity android:name=".features.admin.AdminAttendeesActivity" android:exported="false" />
     </application></manifest>

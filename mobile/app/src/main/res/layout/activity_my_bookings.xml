@@ -7,7 +7,7 @@
     android:background="#F8FAFC"
     android:orientation="vertical">
 
-    <!-- ══ NAVBAR (Parity with Web AppNav — logged in, My Bookings active) ══ -->
+    <!-- ══ NAVBAR (Parity with Web AppNav — logged in mode) ══ -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="64dp"
@@ -17,32 +17,29 @@
         android:orientation="horizontal"
         android:paddingHorizontal="16dp">
 
-        <!-- Back arrow -->
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
-            android:src="@android:drawable/ic_menu_revert"
-            app:tint="#1E3A5F" />
-
+        <!-- Brand Logo -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:fontFamily="sans-serif-black"
             android:letterSpacing="-0.02"
             android:text="StillNess"
             android:textColor="#1E3A5F"
             android:textSize="18sp" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+        <!-- Nav Links -->
+        <TextView
+            android:id="@+id/btnNavSessions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:padding="8dp"
+            android:text="Sessions"
+            android:textColor="#64748B"
+            android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/btnNavBookings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
@@ -50,6 +47,51 @@
             android:textColor="#3B82F6"
             android:textSize="14sp"
             android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- User Avatar + Name -->
+        <FrameLayout
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_avatar_circle">
+
+            <TextView
+                android:id="@+id/tv_avatar_initials"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="U"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/nav_welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:ellipsize="end"
+            android:maxWidth="80dp"
+            android:singleLine="true"
+            android:text="User"
+            android:textColor="#1E3A5F"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/nav_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:padding="6dp"
+            android:text="Sign Out"
+            android:textColor="#64748B"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <androidx.core.widget.NestedScrollView

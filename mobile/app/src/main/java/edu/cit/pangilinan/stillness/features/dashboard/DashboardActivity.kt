@@ -61,10 +61,13 @@ class DashboardActivity : Activity() {
         findViewById<TextView>(R.id.nav_logout).setOnClickListener { showLogoutDialog() }
 
         findViewById<TextView>(R.id.btnNavSessions).setOnClickListener {
-            startActivity(Intent(this, SessionsActivity::class.java))
+            // Already on Dashboard (Sessions)
         }
         findViewById<TextView>(R.id.btnNavBookings).setOnClickListener {
-            startActivity(Intent(this, MyBookingsActivity::class.java))
+            val intent = Intent(this, MyBookingsActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            startActivity(intent)
+            overridePendingTransition(0, 0)
         }
 
         // ═══ Hero Section ═══

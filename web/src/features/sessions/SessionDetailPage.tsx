@@ -143,7 +143,14 @@ export default function SessionDetailPage() {
         <div className="sd-left">
 
           {/* Hero */}
-          <div className="sd-hero" style={{ background: getThumbBg() }}>
+          <div
+            className="sd-hero"
+            style={{
+              background: session.thumbnailUrl
+                ? `linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.55)), url(${session.thumbnailUrl}) center/cover no-repeat`
+                : getThumbBg(),
+            }}
+          >
             <span className={`sd-badge ${getBadgeClass(session.type)}`}>
               {session.type}
             </span>

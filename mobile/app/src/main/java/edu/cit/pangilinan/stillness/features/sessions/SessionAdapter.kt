@@ -23,12 +23,16 @@ class SessionAdapter(
     class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTitle: TextView = itemView.findViewById(R.id.tvSessionTitle)
         val tvInstructor: TextView = itemView.findViewById(R.id.tvSessionInstructor)
-        val tvCategory: TextView = itemView.findViewById(R.id.tvSessionCategory)
         val tvDate: TextView = itemView.findViewById(R.id.tvSessionDate)
+        val tvLocation: TextView = itemView.findViewById(R.id.tvSessionLocation)
         val tvSpots: TextView = itemView.findViewById(R.id.tvSessionSpots)
-        val ivSpotsIcon: ImageView = itemView.findViewById(R.id.ivSpotsIcon)
+        val tvRatio: TextView = itemView.findViewById(R.id.tvSessionRatio)
+        val pbCapacity: android.widget.ProgressBar = itemView.findViewById(R.id.pbCapacity)
         val tvThumbText: TextView = itemView.findViewById(R.id.tvSessionThumbText)
+        val tvPrice: TextView = itemView.findViewById(R.id.tvPrice)
         val btnReserve: TextView = itemView.findViewById(R.id.btnReserve)
+        val tvAvatarInitials: TextView = itemView.findViewById(R.id.tvAvatarInitials)
+        val flSessionThumb: android.widget.FrameLayout = itemView.findViewById(R.id.flSessionThumb)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
@@ -39,59 +43,86 @@ class SessionAdapter(
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val session = sessions[position]
-        val context = holder.itemView.context
-
+        
         holder.tvTitle.text = session.title ?: "Untitled Session"
-        holder.tvInstructor.text = "with ${session.instructorName ?: "Instructor"}"
-        // Category tag (Parity with Web getTagLabel / getTagClass helpers)
-        val categoryLower = (session.category ?: "").lowercase()
+        
+        val instructorName = session.resolvedInstructorName()
+        holder.tvInstructor.text = "with $instructorName"
+        
+        // Avatar initials
+        val initials = instructorName.split(" ")
+            .mapNotNull { it.firstOrNull()?.toString() }
+            .take(2)
+            .joinToString("")
+            .uppercase()
+        holder.tvAvatarInitials.text = if (initials.isNotEmpty()) initials else "IN"
+        
+        // Category tag in thumbnail
+        val categoryLower = session.resolvedType().lowercase()
         val tagLabel = when {
             categoryLower.contains("yoga") -> "Yoga"
             categoryLower.contains("breath") -> "Breathwork"
             else -> "Meditation"
         }
-        holder.tvCategory.text = tagLabel
-
-        // Tag color (Parity with Web .sn-card__tag--* colors)
-        val tagBgColor = when {
-            categoryLower.contains("yoga") -> "#F0F9FF"       // yoga bg
-            categoryLower.contains("breath") -> "#FFF7ED"     // breathwork bg
-            else -> "#EFF6FF"                                 // meditation bg
-        }
-        val tagTextColor = when {
-            categoryLower.contains("yoga") -> "#0EA5E9"
-            categoryLower.contains("breath") -> "#EA580C"
-            else -> "#3B82F6"
-        }
-        holder.tvCategory.backgroundTintList = ColorStateList.valueOf(Color.parseColor(tagBgColor))
-        holder.tvCategory.setTextColor(Color.parseColor(tagTextColor))
         
-        // Formatting date/time to match web app fmtTime helper
-        holder.tvDate.text = formatSessionTime(session.date ?: "", session.startTime ?: "")
+        // Formatting date/time
+        holder.tvDate.text = formatSessionTime(session.resolvedDate(), session.resolvedStartTimeDisplay())
+        
+        // Location
+        holder.tvLocation.text = session.location ?: "TBD"
 
-        // Spots logic (Parity with Web getSpots helper)
-        val remaining = session.capacity - session.enrolledCount
+        // Capacity and Spots
+        val booked = session.resolvedBookedCount()
+        val capacity = session.capacity
+        val remaining = Math.max(capacity - booked, 0)
+        
+        val pct = if (capacity > 0) Math.min((booked.toFloat() / capacity.toFloat()) * 100, 100f).toInt() else 0
+        
         val spotsText = "$remaining spot${if (remaining != 1) "s" else ""} remaining"
         holder.tvSpots.text = spotsText
+        holder.tvRatio.text = "$booked/$capacity"
+        
+        holder.pbCapacity.progress = pct
         
         val spotsColor = when {
-            remaining <= 2 -> "#EF4444" // Red
+            remaining == 0 -> "#EF4444" // Red (full)
+            remaining <= 3 -> "#EF4444" // Red
             remaining <= 5 -> "#F59E0B" // Orange
             else -> "#10B981"           // Green
         }
         val colorInt = Color.parseColor(spotsColor)
         holder.tvSpots.setTextColor(colorInt)
-        ImageViewCompat.setImageTintList(holder.ivSpotsIcon, ColorStateList.valueOf(colorInt))
+        
+        holder.pbCapacity.progressTintList = ColorStateList.valueOf(colorInt)
 
-        // Thumbnail text (Parity with Web getThumbLabel helper)
+        // Thumbnail text
         holder.tvThumbText.text = when {
             categoryLower.contains("yoga") -> "Yoga Session"
             categoryLower.contains("breath") -> "Breathwork Session"
             else -> "Meditation Session"
         }
 
-        holder.itemView.setOnClickListener { onClick(session) }
-        holder.btnReserve.setOnClickListener { onClick(session) }
+        // Price
+        holder.tvPrice.text = if (session.price > 0) String.format("$%.2f", session.price) else "Free"
+
+        // Reserve Button state
+        if (remaining > 0) {
+            holder.btnReserve.text = "Reserve Spot"
+            holder.btnReserve.backgroundTintList = null // Use default bg
+            holder.btnReserve.setTextColor(Color.WHITE)
+            holder.btnReserve.isEnabled = true
+            
+            holder.itemView.setOnClickListener { onClick(session) }
+            holder.btnReserve.setOnClickListener { onClick(session) }
+        } else {
+            holder.btnReserve.text = "Session Full"
+            holder.btnReserve.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E2E8F0"))
+            holder.btnReserve.setTextColor(Color.parseColor("#64748B"))
+            holder.btnReserve.isEnabled = false
+            
+            holder.itemView.setOnClickListener(null)
+            holder.btnReserve.setOnClickListener(null)
+        }
     }
 
     override fun getItemCount() = sessions.size
