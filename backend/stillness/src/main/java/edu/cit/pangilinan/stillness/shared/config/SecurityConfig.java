@@ -47,6 +47,7 @@ public class SecurityConfig {
                     .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                     .requestMatchers("/uploads/**").permitAll()
                     .requestMatchers("/sessions/*/thumbnail").permitAll()
+                    .requestMatchers(org.springframework.http.HttpMethod.GET, "/sessions", "/sessions/**", "/api/v1/sessions", "/api/v1/sessions/**").permitAll()
                     .requestMatchers("/admin/**", "/api/v1/admin/**").hasAuthority("ROLE_INSTRUCTOR")
                         .anyRequest().authenticated()
                 )
