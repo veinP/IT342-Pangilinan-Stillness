@@ -79,6 +79,32 @@ public class BookingController {
         }
     }
 
+    @GetMapping("/check/{sessionId}")
+    public ResponseEntity<?> checkBookingStatus(@PathVariable UUID sessionId) {
+        try {
+            User currentUser = getCurrentUser();
+            if (currentUser == null) {
+                return ResponseEntity.ok(ApiResponse.builder()
+                        .success(true)
+                        .data(java.util.Map.of("booked", false))
+                        .timestamp(LocalDateTime.now().toString())
+                        .build());
+            }
+            boolean alreadyBooked = bookingService.hasActiveBooking(currentUser, sessionId);
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .data(java.util.Map.of("booked", alreadyBooked))
+                    .timestamp(LocalDateTime.now().toString())
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.builder()
+                    .success(true)
+                    .data(java.util.Map.of("booked", false))
+                    .timestamp(LocalDateTime.now().toString())
+                    .build());
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getBookingById(@PathVariable UUID id) {
         try {

@@ -20,14 +20,16 @@ public class StripePaymentStrategy implements PaymentStrategy {
             PaymentIntent intent = PaymentIntent.create(
                     PaymentIntentCreateParams.builder()
                             .setAmount(amount.multiply(BigDecimal.valueOf(100)).longValue())
-                            .setCurrency("php")
+                            .setCurrency("usd")
                             .setPaymentMethod(paymentMethodId)
+                            .addPaymentMethodType("card")
                             .setConfirm(true)
+                            .setReturnUrl("https://still-ness.vercel.app/bookings")
                             .build()
             );
             return PaymentResult.success(intent.getId(), amount, paymentMethodId);
         } catch (Exception e) {
-            throw new IllegalStateException("Stripe payment failed", e);
+            throw new IllegalStateException("Stripe payment failed: " + e.getMessage(), e);
         }
     }
-}
+}

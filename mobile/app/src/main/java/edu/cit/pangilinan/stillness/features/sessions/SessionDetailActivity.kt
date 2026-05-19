@@ -3,10 +3,8 @@ package edu.cit.pangilinan.stillness.features.sessions
 import edu.cit.pangilinan.stillness.R
 
 import edu.cit.pangilinan.stillness.features.auth.LoginActivity
-import edu.cit.pangilinan.stillness.features.bookings.BookingApi
-import edu.cit.pangilinan.stillness.features.bookings.MyBookingsActivity
-import edu.cit.pangilinan.stillness.shared.api.ApiClient
-
+import edu.cit.pangilinan.stillness.features.bookings.BookingCheckoutActivity
+import edu.cit.pangilinan.stillness.shared.auth.SessionManager
 
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -18,7 +16,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.gson.Gson
 import edu.cit.pangilinan.stillness.model.SessionDto
-import edu.cit.pangilinan.stillness.model.SingleBookingResponse
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,7 +38,7 @@ class SessionDetailActivity : AppCompatActivity() {
         populateSessionDetails(session)
 
         findViewById<Button>(R.id.btnBookSession).setOnClickListener {
-            handleBooking(session.id)
+            handleReserve(sessionJson)
         }
     }
 
@@ -55,15 +52,15 @@ class SessionDetailActivity : AppCompatActivity() {
 
     private fun populateSessionDetails(session: SessionDto) {
         // Hero section
-        findViewById<TextView>(R.id.tvDetailBadge).text = session.category.uppercase()
+        findViewById<TextView>(R.id.tvDetailBadge).text = session.resolvedType().uppercase()
         findViewById<TextView>(R.id.tvDetailHeroTitle).text = session.title
 
         // About section
         findViewById<TextView>(R.id.tvDetailDescription).text = session.description
 
         // Instructor section
-        findViewById<TextView>(R.id.tvDetailInstructorName).text = session.instructorName
-        findViewById<TextView>(R.id.tvInstructorInitials).text = session.instructorName
+        findViewById<TextView>(R.id.tvDetailInstructorName).text = session.resolvedInstructorName()
+        findViewById<TextView>(R.id.tvInstructorInitials).text = session.resolvedInstructorName()
             .split(" ")
             .mapNotNull { it.firstOrNull()?.toString() }
             .joinToString("")
@@ -71,12 +68,12 @@ class SessionDetailActivity : AppCompatActivity() {
             .uppercase()
         
         // Mock bio/exp if not in DTO (matching web fallback logic)
-        findViewById<TextView>(R.id.tvInstructorBio).text = "Start your day with clarity and intention. This guided ${session.category.lowercase()} session focuses on breath awareness and mindful presence."
+        findViewById<TextView>(R.id.tvInstructorBio).text = "Start your day with clarity and intention. This guided ${session.resolvedType().lowercase()} session focuses on breath awareness and mindful presence."
         findViewById<TextView>(R.id.tvInstructorExp).text = "8 years experience"
 
         // Details Sidebar (matching web layout)
-        setupDetailRow(R.id.rowDate, android.R.drawable.ic_menu_my_calendar, "Date", formatDate(session.date))
-        setupDetailRow(R.id.rowTime, android.R.drawable.ic_menu_recent_history, "Time", "${session.startTime} - ${session.endTime}")
+        setupDetailRow(R.id.rowDate, android.R.drawable.ic_menu_my_calendar, "Date", formatDate(session.resolvedDate()))
+        setupDetailRow(R.id.rowTime, android.R.drawable.ic_menu_recent_history, "Time", "${session.resolvedStartTimeDisplay()} - ${session.resolvedEndTimeDisplay()}")
         setupDetailRow(R.id.rowLocation, android.R.drawable.ic_dialog_map, "Location", session.location ?: "Studio A - Downtown", "123 Wellness Way, Suite 100")
         setupDetailRow(R.id.rowDuration, android.R.drawable.ic_menu_recent_history, "Duration", "60 minutes")
 
@@ -134,9 +131,11 @@ class SessionDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleBooking(sessionId: String) {
-        val sharedPrefs = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
-        val token = sharedPrefs.getString("token", null)
+    /**
+     * Navigate to BookingCheckoutActivity (Parity with Web: navigate(`/sessions/${session.id}/checkout`))
+     */
+    private fun handleReserve(sessionJson: String) {
+        val token = SessionManager.getToken(this)
 
         if (token == null) {
             Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show()
@@ -144,27 +143,8 @@ class SessionDetailActivity : AppCompatActivity() {
             return
         }
 
-        val btnBook = findViewById<Button>(R.id.btnBookSession)
-        btnBook.isEnabled = false
-        btnBook.text = "Processing..."
-
-        BookingApi.createBooking(token, sessionId, object : ApiClient.ApiCallback<SingleBookingResponse> {
-            override fun onSuccess(result: SingleBookingResponse) {
-                runOnUiThread {
-                    Toast.makeText(this@SessionDetailActivity, "Booking Successful!", Toast.LENGTH_LONG).show()
-                    val intent = Intent(this@SessionDetailActivity, MyBookingsActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }
-            }
-
-            override fun onError(error: String) {
-                runOnUiThread {
-                    btnBook.isEnabled = true
-                    btnBook.text = "Reserve Spot"
-                    Toast.makeText(this@SessionDetailActivity, error, Toast.LENGTH_LONG).show()
-                }
-            }
-        })
+        val intent = Intent(this, BookingCheckoutActivity::class.java)
+        intent.putExtra("SESSION_JSON", sessionJson)
+        startActivity(intent)
     }
 }

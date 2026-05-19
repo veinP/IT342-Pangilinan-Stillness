@@ -7,6 +7,7 @@ object SessionManager {
     private const val PREF_NAME = "StillnessPrefs"
     private const val KEY_TOKEN = "jwt_token"
     private const val KEY_EMAIL = "user_email"
+    private const val KEY_ROLE = "user_role"
 
     private fun getPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -26,6 +27,14 @@ object SessionManager {
 
     fun getEmail(context: Context): String? {
         return getPrefs(context).getString(KEY_EMAIL, null)
+    }
+
+    fun saveRole(context: Context, role: String) {
+        getPrefs(context).edit().putString(KEY_ROLE, role).apply()
+    }
+
+    fun getRole(context: Context): String? {
+        return getPrefs(context).getString(KEY_ROLE, null)
     }
 
     fun clearSession(context: Context) {

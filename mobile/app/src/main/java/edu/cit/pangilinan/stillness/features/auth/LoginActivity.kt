@@ -14,34 +14,17 @@ import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import android.widget.*
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import edu.cit.pangilinan.stillness.model.LoginResponse
 
 class LoginActivity : Activity() {
-
-    private lateinit var googleSignInClient: GoogleSignInClient
-    private val RC_SIGN_IN = 9001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Configure Google Sign-In using your Web Client ID from .env
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .requestIdToken("199650967573-asgsbf280p6v21p74e9uobhlb2mtqlgq.apps.googleusercontent.com")
-            .build()
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
         val etEmail = findViewById<EditText>(R.id.et_email)
         val etPassword = findViewById<EditText>(R.id.et_password)
         val btnLogin = findViewById<Button>(R.id.btn_login)
-        val btnGoogleLogin = findViewById<LinearLayout>(R.id.btn_google_login)
         val tvError = findViewById<TextView>(R.id.tv_error)
         val tvGoRegister = findViewById<TextView>(R.id.tv_go_register)
         val ivToggle = findViewById<ImageView>(R.id.iv_toggle_password)
@@ -78,11 +61,22 @@ class LoginActivity : Activity() {
                 override fun onSuccess(result: LoginResponse) {
                     runOnUiThread {
                         val token = result.data?.token
+                        val role = result.data?.user?.role
                         if (!token.isNullOrEmpty()) {
                             Log.d("LOGIN_SUCCESS", "Status Code: 200 OK")
                             SessionManager.saveToken(this@LoginActivity, token)
                             SessionManager.saveEmail(this@LoginActivity, email)
-                            startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
+                            if (role != null) {
+                                SessionManager.saveRole(this@LoginActivity, role)
+                            }
+                            
+                            val targetActivity = if (role == "ROLE_INSTRUCTOR") {
+                                Class.forName("edu.cit.pangilinan.stillness.features.admin.AdminSessionsActivity")
+                            } else {
+                                DashboardActivity::class.java
+                            }
+                            
+                            startActivity(Intent(this@LoginActivity, targetActivity))
                             finish()
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                         } else {
@@ -106,65 +100,10 @@ class LoginActivity : Activity() {
             })
         }
 
-        btnGoogleLogin.setOnClickListener {
-            val signInIntent = googleSignInClient.signInIntent
-            startActivityForResult(signInIntent, RC_SIGN_IN)
-        }
-
         tvGoRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                val idToken = account?.idToken
-                if (idToken != null) {
-                    handleGoogleSignIn(idToken)
-                } else {
-                    Log.e("GOOGLE_SIGN_IN", "ID Token is null")
-                    Toast.makeText(this, "Google Sign-In failed: Token error", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: ApiException) {
-                Log.e("GOOGLE_SIGN_IN", "Sign-In failed code: ${e.statusCode}")
-                Toast.makeText(this, "Google Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun handleGoogleSignIn(idToken: String) {
-        findViewById<ProgressBar>(R.id.progress_login).visibility = View.VISIBLE
-        ApiClient.googleLogin(idToken, object : ApiClient.ApiCallback<LoginResponse> {
-            override fun onSuccess(result: LoginResponse) {
-                runOnUiThread {
-                    val token = result.data?.token
-                    if (!token.isNullOrEmpty()) {
-                        Log.d("LOGIN_SUCCESS", "Google Login Status Code: 200 OK")
-                        SessionManager.saveToken(this@LoginActivity, token)
-                        SessionManager.saveEmail(this@LoginActivity, result.data.user.email)
-                        startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
-                        finish()
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                    } else {
-                        Toast.makeText(this@LoginActivity, "Login failed", Toast.LENGTH_SHORT).show()
-                        findViewById<ProgressBar>(R.id.progress_login).visibility = View.GONE
-                    }
-                }
-            }
-
-            override fun onError(error: String) {
-                runOnUiThread {
-                    Log.e("LOGIN_FAIL", "Google Login Error: $error")
-                    Toast.makeText(this@LoginActivity, error, Toast.LENGTH_SHORT).show()
-                    findViewById<ProgressBar>(R.id.progress_login).visibility = View.GONE
-                }
-            }
-        })
     }
 
     @Deprecated("Deprecated in Java")

@@ -1,144 +1,210 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Stillness Mobile Landing — Pixel-perfect parity with Web LandingPage.tsx -->
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/stillness_bg">
+    android:background="#F8FAFC">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Hero Section -->
+        <!-- ══ NAVBAR (Parity with Web AppNav — guest mode: Logo + Login + Sign Up) ══ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@color/white"
+            android:elevation="2dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp">
+
+            <!-- Brand Logo -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="-0.02"
+                android:text="StillNess"
+                android:textColor="#1E3A5F"
+                android:textSize="20sp" />
+
+            <!-- Login Button (outline) -->
+            <Button
+                android:id="@+id/btnNavLogin"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="8dp"
+                android:text="Login"
+                android:textAllCaps="false"
+                android:textColor="#3B82F6"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp"
+                app:strokeColor="#3B82F6"
+                app:strokeWidth="1.5dp" />
+
+            <!-- Sign Up Button (solid) -->
+            <Button
+                android:id="@+id/btnNavSignUp"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:backgroundTint="#3B82F6"
+                android:text="Sign Up"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp" />
+        </LinearLayout>
+
+        <!-- ══ HERO SECTION (Parity with Web .sn-hero) ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="32dp">
+            android:paddingHorizontal="24dp"
+            android:paddingTop="48dp"
+            android:paddingBottom="56dp">
 
+            <!-- text-6xl font-bold color=#1E3A5F -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:letterSpacing="-0.02"
                 android:text="Find Your Stillness"
-                android:textColor="@color/black"
-                android:textSize="32sp"
+                android:textColor="#1E3A5F"
+                android:textSize="36sp"
                 android:textStyle="bold" />
 
+            <!-- text-xl color=#64748B -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:gravity="center"
+                android:lineSpacingExtra="6dp"
                 android:text="Book meditation and wellness sessions that fit your life."
-                android:textColor="@color/text_secondary"
+                android:textColor="#64748B"
                 android:textSize="16sp" />
 
-            <LinearLayout
+            <!-- CTA: Browse Sessions button (Parity with Web .sn-btn-browse) -->
+            <Button
+                android:id="@+id/btnViewSessions"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:orientation="vertical">
+                android:layout_height="56dp"
+                android:layout_marginTop="40dp"
+                android:backgroundTint="#3B82F6"
+                android:text="Browse Sessions"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp" />
 
-                <Button
-                    android:id="@+id/btnViewSessions"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:text="Browse Sessions"
-                    android:textAllCaps="false"
-                    android:textStyle="bold" />
-
-                <Button
-                    android:id="@+id/btnLogin"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Sign In with Email"
-                    android:textAllCaps="false"
-                    android:textColor="@color/stillness_blue_primary" />
-            </LinearLayout>
+            <!-- Sign In with Email (outline — replaces Google on mobile) -->
+            <Button
+                android:id="@+id/btnLogin"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="Sign In with Email"
+                android:textAllCaps="false"
+                android:textColor="#1E3A5F"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                app:strokeColor="#DBEAFE"
+                app:strokeWidth="1.5dp" />
         </LinearLayout>
 
-        <!-- Quote Section -->
-        <androidx.cardview.widget.CardView
+        <!-- ══ QUOTE BANNER (Parity with Web .sn-quote — bg #EFF6FF) ══ -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="2dp">
+            android:background="#EFF6FF"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="24dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <!-- Label: "💬 FRESH WELLNESS QUOTE" -->
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:letterSpacing="0.1"
+                    android:text="💬  FRESH WELLNESS QUOTE"
+                    android:textColor="#3B82F6"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Fresh Wellness Quote"
-                        android:textColor="@color/stillness_blue_primary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                <!-- Quote Text -->
+                <TextView
+                    android:id="@+id/tvQuoteText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:lineSpacingExtra="6dp"
+                    android:text="&quot;Loading your quote…&quot;"
+                    android:textColor="#1E3A5F"
+                    android:textSize="16sp" />
 
-                    <TextView
-                        android:id="@+id/tvQuoteText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Loading your quote…"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="italic" />
-
-                    <TextView
-                        android:id="@+id/tvQuoteAuthor"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="— StillNess"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/btnRefreshQuote"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="top"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@android:drawable/ic_menu_rotate"
-                    app:tint="@color/stillness_blue_primary" />
+                <!-- Author -->
+                <TextView
+                    android:id="@+id/tvQuoteAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="— StillNess"
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- Sessions Section -->
+            <!-- Refresh Button -->
+            <ImageButton
+                android:id="@+id/btnRefreshQuote"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="top"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Refresh quote"
+                android:src="@android:drawable/ic_menu_rotate"
+                app:tint="#3B82F6" />
+        </LinearLayout>
+
+        <!-- ══ UPCOMING SESSIONS (Parity with Web .sn-sessions) ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingHorizontal="16dp"
+            android:paddingTop="36dp"
+            android:paddingBottom="48dp">
 
+            <!-- Section Title -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="20dp"
                 android:text="Upcoming Sessions"
-                android:textColor="@color/black"
-                android:textSize="20sp"
+                android:textColor="#1E3A5F"
+                android:textSize="24sp"
                 android:textStyle="bold" />
 
+            <!-- Session Cards RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvUpcomingSessions"
                 android:layout_width="match_parent"
@@ -146,20 +212,29 @@
                 android:nestedScrollingEnabled="false" />
         </LinearLayout>
 
-        <!-- Footer -->
+        <!-- ══ FOOTER (Parity with Web .sn-footer) ══ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="32dp">
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="24dp">
+
+            <!-- Divider line -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="20dp"
+                android:background="#E0E7FF" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="© 2026 StillNess. All rights reserved."
-                android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textColor="#64748B"
+                android:textSize="13sp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -172,25 +247,26 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="Privacy Policy"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="Terms"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="Contact"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

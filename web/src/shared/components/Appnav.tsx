@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import '../../styles/AppNav.css';
+import '../../styles/Appnav.css';
 
 function initials(name = '') {
   return name.split(' ').map(p => p[0] ?? '').join('').slice(0, 2).toUpperCase() || 'U';

@@ -33,6 +33,23 @@ class RegisterActivity : Activity() {
         val ivToggle = findViewById<ImageView>(R.id.iv_toggle_password)
         val progressRegister = findViewById<ProgressBar>(R.id.progress_register)
 
+        val llRoleUser = findViewById<LinearLayout>(R.id.ll_role_user)
+        val llRoleInstructor = findViewById<LinearLayout>(R.id.ll_role_instructor)
+
+        var selectedRole = "ROLE_USER"
+
+        llRoleUser.setOnClickListener {
+            selectedRole = "ROLE_USER"
+            llRoleUser.setBackgroundResource(R.drawable.bg_role_card_active)
+            llRoleInstructor.setBackgroundResource(R.drawable.bg_role_card)
+        }
+
+        llRoleInstructor.setOnClickListener {
+            selectedRole = "ROLE_INSTRUCTOR"
+            llRoleInstructor.setBackgroundResource(R.drawable.bg_role_card_active)
+            llRoleUser.setBackgroundResource(R.drawable.bg_role_card)
+        }
+
         // Password toggle (toggles both password and confirm password)
         var isPasswordVisible = false
         etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
@@ -74,7 +91,7 @@ class RegisterActivity : Activity() {
             btnRegister.isEnabled = false
             progressRegister.visibility = View.VISIBLE
 
-            ApiClient.register(fullName, email, password, confirmPassword,
+            ApiClient.register(fullName, email, password, confirmPassword, selectedRole,
                 object : ApiClient.ApiCallback<RegisterResponse> {
                     override fun onSuccess(result: RegisterResponse) {
                         runOnUiThread {

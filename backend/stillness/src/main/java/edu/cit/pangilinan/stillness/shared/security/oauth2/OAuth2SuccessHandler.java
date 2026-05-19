@@ -42,14 +42,25 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         User user = userRepository.findByGoogleId(googleId)
                 .orElseGet(() -> {
-                    User newUser = User.builder()
-                            .email(email)
-                            .fullName(name)
-                            .googleId(googleId)
-                            .role("ROLE_USER")
-                            .emailVerified(true)
-                            .build();
-                    return userRepository.save(newUser);
+                    // Check if user exists with same email (registered via email/password)
+                    return userRepository.findByEmail(email)
+                            .map(existingUser -> {
+                                // Link Google ID to existing account
+                                existingUser.setGoogleId(googleId);
+                                existingUser.setEmailVerified(true);
+                                return userRepository.save(existingUser);
+                            })
+                            .orElseGet(() -> {
+                                // Create brand new user
+                                User newUser = User.builder()
+                                        .email(email)
+                                        .fullName(name)
+                                        .googleId(googleId)
+                                        .role("ROLE_USER")
+                                        .emailVerified(true)
+                                        .build();
+                                return userRepository.save(newUser);
+                            });
                 });
 
         // Send welcome email only for new users
