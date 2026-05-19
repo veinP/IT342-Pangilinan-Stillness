@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,7 +34,8 @@ public class SessionService {
 
 	@Transactional
 	public Page<SessionDto> getAllSessions(Pageable pageable) {
-		return sessionRepository.findAll(pageable).map(this::convertToDto);
+		sessionRepository.archivePastSessions(LocalDateTime.now());
+		return sessionRepository.findByStatusNot("ARCHIVED", pageable).map(this::convertToDto);
 	}
 
 	@Transactional
