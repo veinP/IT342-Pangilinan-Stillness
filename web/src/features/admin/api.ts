@@ -54,8 +54,26 @@ export const adminApi = {
         }
       }
       return [];
-    } catch {
-      return [];
+    } catch (e) {
+      console.warn('Failed to fetch /admin/sessions, falling back to /sessions. Please ensure backend is restarted.', e);
+      try {
+        const res = await api.get<ApiResponse<unknown>>('/sessions', {
+          params: { page: 0, limit: 100 },
+        });
+        const payload = unwrap(res);
+        if (payload && typeof payload === 'object') {
+          const objectPayload = payload as Record<string, unknown>;
+          if (Array.isArray(objectPayload.sessions)) {
+            return objectPayload.sessions.map((entry) => normalizeSession(entry as Partial<Session>));
+          }
+          if (Array.isArray(objectPayload.content)) {
+            return objectPayload.content.map((entry) => normalizeSession(entry as Partial<Session>));
+          }
+        }
+        return [];
+      } catch {
+        return [];
+      }
     }
   },
 
