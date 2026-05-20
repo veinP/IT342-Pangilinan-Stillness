@@ -14,8 +14,7 @@ function buildApiBaseUrl() {
 
 export const API_BASE_URL = buildApiBaseUrl();
 
-// Use window.location.origin so the proxy catches /oauth2, or in production it hits the correct root path
-export const GOOGLE_OAUTH_URL = `${window.location.origin}/oauth2/authorization/google`;
+export const GOOGLE_OAUTH_URL = `${API_BASE_URL}/oauth2/authorization/google`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
