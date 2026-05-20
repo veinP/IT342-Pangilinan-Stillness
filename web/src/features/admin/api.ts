@@ -5,7 +5,7 @@ import api from '../../shared/api/axios';
 import type { ApiResponse } from '../auth/api';
 import type { Session } from '../sessions/api';
 export type { Session };
-import { sessionsApi } from '../sessions/api';
+import { normalizeSession } from '../sessions/api';
 
 export interface PaymentSummary {
   totalRevenue: number;
@@ -42,8 +42,21 @@ function unwrap<T>(res: { data: ApiResponse<T> }): T {
 
 export const adminApi = {
   async getAdminSessions(): Promise<Session[]> {
-    const result = await sessionsApi.getSessions({ page: 0, limit: 100 });
-    return result.sessions;
+    try {
+      const res = await api.get<ApiResponse<unknown>>('/admin/sessions', {
+        params: { page: 0, limit: 100 },
+      });
+      const payload = unwrap(res);
+      if (payload && typeof payload === 'object') {
+        const objectPayload = payload as Record<string, unknown>;
+        if (Array.isArray(objectPayload.sessions)) {
+          return objectPayload.sessions.map((entry) => normalizeSession(entry as Partial<Session>));
+        }
+      }
+      return [];
+    } catch {
+      return [];
+    }
   },
 
   async getAdminAttendees(sessionId: string): Promise<Attendee[]> {

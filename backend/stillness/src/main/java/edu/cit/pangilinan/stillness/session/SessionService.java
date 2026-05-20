@@ -39,6 +39,12 @@ public class SessionService {
 	}
 
 	@Transactional
+	public Page<SessionDto> getAllSessionsAdmin(Pageable pageable) {
+		sessionRepository.archivePastSessions(LocalDateTime.now());
+		return sessionRepository.findAll(pageable).map(this::convertToDto);
+	}
+
+	@Transactional
 	public SessionDetailDto getSessionByIdDetail(UUID id) {
 		Optional<Session> session = sessionRepository.findById(id);
 		return session.map(this::convertToDetailDto).orElse(null);
