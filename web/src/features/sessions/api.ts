@@ -31,6 +31,7 @@ export interface Session {
   address?: string;
   duration?: number;
   available: boolean;
+  status?: string;
 }
 
 export interface SessionFilters {
@@ -87,6 +88,7 @@ export function normalizeSession(raw: Partial<Session> & { id?: string; title?: 
     address: raw.address,
     duration: raw.duration,
     available,
+    status: raw.status ?? 'ACTIVE',
   };
 }
 

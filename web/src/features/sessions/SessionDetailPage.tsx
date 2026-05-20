@@ -120,7 +120,8 @@ export default function SessionDetailPage() {
   );
 
   const { remaining, pct, tier } = getCapacity(session.bookedCount ?? 0, session.capacity ?? 0);
-  const available = remaining > 0;
+  const isPast = new Date(session.startTime).getTime() < Date.now();
+  const available = remaining > 0 && session.status !== 'ARCHIVED' && !isPast;
   const duration  = session.duration ?? 60;
 
   return (
@@ -288,7 +289,7 @@ export default function SessionDetailPage() {
               Reserve Spot
             </button>
           ) : (
-            <div className="sd-full-btn">Session Full</div>
+            <div className="sd-full-btn">{isPast || session.status === 'ARCHIVED' ? 'Session Ended' : 'Session Full'}</div>
           )}
 
           {/* Cancellation notice */}
