@@ -14,4 +14,5 @@ public interface BookingRepository extends JpaRepository<Booking, UUID> {
     List<Booking> findByUser(User user);
     List<Booking> findBySession(Session session);
     long countBySessionAndStatus(Session session, String status);
+    boolean existsByUserAndSessionAndStatusNot(User user, Session session, String cancelledStatus);
 }

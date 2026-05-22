@@ -162,10 +162,10 @@ class SessionControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("GET /sessions should redirect to login if auth is actually required by config")
+    @DisplayName("GET /sessions should not require authentication")
     void getSessions_shouldNotRequireAuth() throws Exception {
-        // Sessions list is intercepted by security config
         mockMvc.perform(get("/sessions"))
-                .andExpect(status().is3xxRedirection());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
     }
 }

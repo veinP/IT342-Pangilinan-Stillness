@@ -2,6 +2,7 @@ package edu.cit.pangilinan.stillness.shared.config;
 
 import edu.cit.pangilinan.stillness.shared.security.jwt.JwtAuthFilter;
 import edu.cit.pangilinan.stillness.shared.security.oauth2.OAuth2SuccessHandler;
+import edu.cit.pangilinan.stillness.shared.security.oauth2.OAuth2FrontendUrlFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FrontendUrlFilter oAuth2FrontendUrlFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,6 +47,9 @@ public class SecurityConfig {
                     .requestMatchers("/auth/**", "/api/v1/auth/**").permitAll()
                     .requestMatchers("/quotes/**", "/api/v1/quotes/**").permitAll()
                     .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                    .requestMatchers("/uploads/**").permitAll()
+                    .requestMatchers("/sessions/*/thumbnail").permitAll()
+                    .requestMatchers(org.springframework.http.HttpMethod.GET, "/sessions", "/sessions/**", "/api/v1/sessions", "/api/v1/sessions/**").permitAll()
                     .requestMatchers("/admin/**", "/api/v1/admin/**").hasAuthority("ROLE_INSTRUCTOR")
                         .anyRequest().authenticated()
                 )
@@ -52,6 +57,7 @@ public class SecurityConfig {
                         .successHandler(oAuth2SuccessHandler)
                 )
                 .authenticationProvider(authenticationProvider())
+                .addFilterBefore(oAuth2FrontendUrlFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

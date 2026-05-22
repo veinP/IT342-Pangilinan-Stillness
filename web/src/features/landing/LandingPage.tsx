@@ -114,7 +114,66 @@ export default function LandingPage() {
     ]).then(([q, s]) => {
       if (!live) return;
       setQuote(q);
-      setSessions(s.sessions.slice(0, 3));
+      const fetched = s.sessions || [];
+      if (fetched.length >= 3) {
+        setSessions(fetched.slice(0, 3));
+      } else {
+        const fallbacks: Session[] = [
+          {
+            id: 'mock-1',
+            title: 'Guided Morning Meditation',
+            type: 'Meditation',
+            instructor: { id: 'm1', fullName: 'Sarah Jenkins', specialty: 'Meditation', bio: 'Zen practitioner', yearsExperience: 8, certifications: [] },
+            startTime: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+            endTime: new Date(Date.now() + 25 * 60 * 60 * 1000).toISOString(),
+            capacity: 50,
+            bookedCount: 12,
+            price: 15.00,
+            location: 'Zen Studio A',
+            available: true,
+            description: 'Start your day with clarity and peaceful presence.',
+            thumbnailUrl: 'https://images.unsplash.com/photo-1545389336-cf090694435e?q=80&w=600&auto=format&fit=crop'
+          },
+          {
+            id: 'mock-2',
+            title: 'Vinyasa Flow Yoga',
+            type: 'Yoga',
+            instructor: { id: 'm2', fullName: 'Marcus Sterling', specialty: 'Yoga', bio: 'Vinyasa specialist', yearsExperience: 6, certifications: [] },
+            startTime: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+            endTime: new Date(Date.now() + (2 * 24 + 1) * 60 * 60 * 1000).toISOString(),
+            capacity: 30,
+            bookedCount: 28,
+            price: 20.00,
+            location: 'Solar Studio',
+            available: true,
+            description: 'Align your breath and movement in this dynamic flow.',
+            thumbnailUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600&auto=format&fit=crop'
+          },
+          {
+            id: 'mock-3',
+            title: 'Evening Breathwork',
+            type: 'Breathwork',
+            instructor: { id: 'm3', fullName: 'Elena Rostova', specialty: 'Breathwork', bio: 'Pranayama teacher', yearsExperience: 7, certifications: [] },
+            startTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+            endTime: new Date(Date.now() + (3 * 24 + 1) * 60 * 60 * 1000).toISOString(),
+            capacity: 25,
+            bookedCount: 15,
+            price: 25.00,
+            location: 'Virtual Room B',
+            available: true,
+            description: 'Release daily stress and restore your energy.',
+            thumbnailUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=600&auto=format&fit=crop'
+          }
+        ];
+        const combined = [...fetched];
+        for (const item of fallbacks) {
+          if (combined.length >= 3) break;
+          if (!combined.some(f => f.title.toLowerCase() === item.title.toLowerCase())) {
+            combined.push(item);
+          }
+        }
+        setSessions(combined);
+      }
     });
     return () => { live = false; };
   }, []);
@@ -198,8 +257,18 @@ export default function LandingPage() {
               <article key={s.id} className="sn-card">
 
                 {/* Thumbnail */}
-                <div className="sn-card__thumb" style={{ background: getThumbBg() }}>
-                  <span className="sn-card__thumb-text">{getThumbLabel(s.type)}</span>
+                <div
+                  className="sn-card__thumb"
+                  style={{
+                    background: s.thumbnailUrl
+                      ? `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5)), url(${s.thumbnailUrl}) center/cover no-repeat`
+                      : getThumbBg(),
+                  }}
+                >
+                  <span className="sn-card__price-badge">
+                    {(s.price ?? 0) > 0 ? `$${s.price.toFixed(2)}` : 'Free'}
+                  </span>
+                  {!s.thumbnailUrl && <span className="sn-card__thumb-text">{getThumbLabel(s.type)}</span>}
                 </div>
 
                 {/* Body */}

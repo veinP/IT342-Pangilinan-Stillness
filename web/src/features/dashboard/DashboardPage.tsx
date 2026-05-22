@@ -15,7 +15,7 @@ export default function DashboardPage() {
     const load = async () => {
       const [quoteData, sessionsData] = await Promise.all([
         quotesApi.getRandomQuote(),
-        sessionsApi.getSessions({ page: 1, limit: 4 }),
+        sessionsApi.getSessions({ page: 0, limit: 4 }),
       ]);
 
       if (!mounted) return;
@@ -83,6 +83,14 @@ export default function DashboardPage() {
           <div className="sessions-grid-dashboard">
             {upcomingSessions.map((session) => (
               <article key={session.id} className="session-card-dashboard">
+                <div className="session-card-dashboard__thumb">
+                  {session.thumbnailUrl ? (
+                    <img src={session.thumbnailUrl} alt="" className="session-card-dashboard__thumb-image" />
+                  ) : (
+                    <div className="session-card-dashboard__thumb-fallback" />
+                  )}
+                  <div className="session-card-dashboard__thumb-overlay" />
+                </div>
                 <div className="session-card-header">
                   <div className="session-type-badge">{session.type}</div>
                   <div className="session-price">{session.price > 0 ? `$${session.price.toFixed(2)}` : 'Free'}</div>
@@ -293,6 +301,32 @@ export default function DashboardPage() {
           transition: all 0.3s ease;
           display: flex;
           flex-direction: column;
+        }
+
+        .session-card-dashboard__thumb {
+          position: relative;
+          height: 170px;
+          overflow: hidden;
+          background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+
+        .session-card-dashboard__thumb-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .session-card-dashboard__thumb-fallback {
+          width: 100%;
+          height: 100%;
+        }
+
+        .session-card-dashboard__thumb-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.08), rgba(0,0,0,0.35));
+          pointer-events: none;
         }
 
         .session-card-dashboard:hover {

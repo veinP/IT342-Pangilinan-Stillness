@@ -34,6 +34,88 @@
   }
 }
 
+/* Premium Floating Toast */
+.premium-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+  border-radius: 16px;
+  padding: 16px 28px;
+  min-width: 340px;
+  max-width: 90%;
+  animation: toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.premium-toast--success {
+  border-left: 5px solid #10b981;
+}
+
+.premium-toast--error {
+  border-left: 5px solid #ef4444;
+}
+
+.premium-toast__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.premium-toast--success .premium-toast__icon {
+  background: #dcfce7;
+  color: #10b981;
+}
+
+.premium-toast--error .premium-toast__icon {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.premium-toast__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.premium-toast__title {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.premium-toast__text {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -24px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+
 /* Sessions Header */
 .sessions-header {
   background: linear-gradient(135deg, #e0f2fe 0%, #f0e7ff 100%);
@@ -339,6 +421,29 @@
   display: flex;
   gap: 0.75rem;
   align-items: center;
+}
+
+.table-avatar-img {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #dbeafe;
+  background: #eff6ff;
+}
+
+.table-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .session-title {

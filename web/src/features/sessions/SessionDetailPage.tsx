@@ -120,7 +120,8 @@ export default function SessionDetailPage() {
   );
 
   const { remaining, pct, tier } = getCapacity(session.bookedCount ?? 0, session.capacity ?? 0);
-  const available = remaining > 0;
+  const isPast = new Date(session.startTime).getTime() < Date.now();
+  const available = remaining > 0 && session.status !== 'ARCHIVED' && !isPast;
   const duration  = session.duration ?? 60;
 
   return (
@@ -143,7 +144,14 @@ export default function SessionDetailPage() {
         <div className="sd-left">
 
           {/* Hero */}
-          <div className="sd-hero" style={{ background: getThumbBg() }}>
+          <div
+            className="sd-hero"
+            style={{
+              background: session.thumbnailUrl
+                ? `linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.55)), url(${session.thumbnailUrl}) center/cover no-repeat`
+                : getThumbBg(),
+            }}
+          >
             <span className={`sd-badge ${getBadgeClass(session.type)}`}>
               {session.type}
             </span>
@@ -281,7 +289,7 @@ export default function SessionDetailPage() {
               Reserve Spot
             </button>
           ) : (
-            <div className="sd-full-btn">Session Full</div>
+            <div className="sd-full-btn">{isPast || session.status === 'ARCHIVED' ? 'Session Ended' : 'Session Full'}</div>
           )}
 
           {/* Cancellation notice */}

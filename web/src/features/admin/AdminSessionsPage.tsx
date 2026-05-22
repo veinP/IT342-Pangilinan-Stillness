@@ -20,6 +20,7 @@ interface SessionFormState {
   endDate: string;
   endTime: string;
   thumbnail: File | null;
+  existingThumbnailUrl: string | null;
 }
 
 const initialFormState: SessionFormState = {
@@ -35,6 +36,7 @@ const initialFormState: SessionFormState = {
   endDate: '',
   endTime: '',
   thumbnail: null,
+  existingThumbnailUrl: null,
 };
 
 export default function AdminSessionsPage() {
@@ -46,6 +48,7 @@ export default function AdminSessionsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'ended'>('upcoming');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -61,14 +64,16 @@ export default function AdminSessionsPage() {
 
   const filteredSessions = useMemo(() => {
     return sessions.filter((session) => {
+      const isPast = new Date(session.startTime).getTime() < Date.now() || session.status === 'ARCHIVED';
+      const matchesTab = activeTab === 'upcoming' ? !isPast : isPast;
       const matchesSearch = searchQuery === '' || 
         session.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         session.instructor.fullName.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = filterType === '' || session.type === filterType;
-      const matchesAvailable = filterStatus === '' || (filterStatus === 'Active' ? session.available : !session.available);
-      return matchesSearch && matchesType && matchesAvailable;
+      const matchesAvailable = filterStatus === '' || (filterStatus === 'Active' ? session.available && !isPast : !session.available || isPast);
+      return matchesTab && matchesSearch && matchesType && matchesAvailable;
     });
-  }, [sessions, searchQuery, filterType, filterStatus]);
+  }, [sessions, searchQuery, filterType, filterStatus, activeTab]);
 
   const stats = useMemo(() => {
     return {
@@ -101,6 +106,7 @@ export default function AdminSessionsPage() {
         endDate: new Date(session.endTime).toISOString().split('T')[0],
         endTime: new Date(session.endTime).toTimeString().slice(0, 5),
         thumbnail: null,
+        existingThumbnailUrl: session.thumbnailUrl || null,
       });
     } else {
       setEditingId(null);
@@ -170,19 +176,36 @@ export default function AdminSessionsPage() {
         location: form.location.trim(),
       };
 
+      let savedSession;
       if (editingId) {
-        await sessionsApi.updateSession(editingId, payload);
+        savedSession = await sessionsApi.updateSession(editingId, payload);
       } else {
-        await sessionsApi.createSession(payload);
+        savedSession = await sessionsApi.createSession(payload);
+      }
+
+      let hasUploadError = false;
+      // Upload thumbnail if a file was selected
+      if (form.thumbnail && savedSession?.id) {
+        try {
+          const updatedSession = await sessionsApi.uploadSessionThumbnail(savedSession.id, form.thumbnail);
+          setSessions((prev) => prev.map((session) => (session.id === updatedSession.id ? updatedSession : session)));
+        } catch (uploadErr) {
+          console.warn('Thumbnail upload failed:', uploadErr);
+          hasUploadError = true;
+          // Session was saved; warn but don't block
+          setMessage({ type: 'success', text: (editingId ? 'Session updated' : 'Session created') + ' (thumbnail upload failed)' });
+        }
       }
 
       const refreshedSessions = await adminApi.getAdminSessions();
       setSessions(refreshedSessions);
-      setMessage({ type: 'success', text: editingId ? 'Session updated successfully' : 'Session created successfully' });
+      if (!hasUploadError) {
+        setMessage({ type: 'success', text: editingId ? 'Session updated successfully' : 'Session created successfully' });
+      }
       setTimeout(() => {
         closeModal();
         setMessage(null);
-      }, 1500);
+      }, 2500);
     } catch (error) {
       setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to save session' });
     }
@@ -218,8 +241,12 @@ export default function AdminSessionsPage() {
   return (
     <AppShell>
       {message && (
-        <div className={`alert alert-${message.type}`}>
-          {message.text}
+        <div className={`premium-toast premium-toast--${message.type}`}>
+          <div className="premium-toast__icon">{message.type === 'success' ? '✓' : '✕'}</div>
+          <div className="premium-toast__content">
+            <div className="premium-toast__title">{message.type === 'success' ? 'Successful' : 'Error'}</div>
+            <div className="premium-toast__text">{message.text}</div>
+          </div>
         </div>
       )}
 
@@ -231,6 +258,22 @@ export default function AdminSessionsPage() {
           </div>
           <button type="button" className="action-btn btn-lg btn-create" onClick={() => openModal()}>
             + Create New Session
+          </button>
+        </div>
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', borderBottom: '1px solid #bfdbfe' }}>
+          <button 
+            type="button" 
+            style={{ padding: '0.5rem 1rem', background: 'transparent', border: 'none', borderBottom: activeTab === 'upcoming' ? '2px solid #3B82F6' : '2px solid transparent', color: activeTab === 'upcoming' ? '#1e3a8a' : '#64748b', cursor: 'pointer', fontWeight: activeTab === 'upcoming' ? 'bold' : 'normal', transition: 'all 0.2s' }}
+            onClick={() => setActiveTab('upcoming')}
+          >
+            Upcoming Sessions
+          </button>
+          <button 
+            type="button" 
+            style={{ padding: '0.5rem 1rem', background: 'transparent', border: 'none', borderBottom: activeTab === 'ended' ? '2px solid #3B82F6' : '2px solid transparent', color: activeTab === 'ended' ? '#1e3a8a' : '#64748b', cursor: 'pointer', fontWeight: activeTab === 'ended' ? 'bold' : 'normal', transition: 'all 0.2s' }}
+            onClick={() => setActiveTab('ended')}
+          >
+            Ended Sessions
           </button>
         </div>
       </section>
@@ -322,7 +365,11 @@ export default function AdminSessionsPage() {
                 <tr key={session.id} className="sessions-table-row">
                   <td>
                     <div className="session-cell">
-                      <div className="table-avatar">{session.type.slice(0, 2)}</div>
+                      {session.thumbnailUrl ? (
+                        <img src={session.thumbnailUrl} alt="" className="table-avatar-img" />
+                      ) : (
+                        <div className="table-avatar">{session.type.slice(0, 2)}</div>
+                      )}
                       <div>
                         <div className="session-title">{session.title}</div>
                         <div className="session-location">{session.location}</div>
@@ -352,9 +399,13 @@ export default function AdminSessionsPage() {
                   </td>
                   <td>{session.price > 0 ? `$${session.price.toFixed(2)}` : <span className="badge badge-free">Free</span>}</td>
                   <td>
-                    <span className={`badge ${session.available ? 'badge-active' : 'badge-inactive'}`}>
-                      {session.available ? 'Available' : 'Unavailable'}
-                    </span>
+                    {session.status === 'ARCHIVED' || new Date(session.startTime).getTime() < Date.now() ? (
+                      <span className="badge badge-inactive">Ended</span>
+                    ) : (
+                      <span className={`badge ${session.available ? 'badge-active' : 'badge-inactive'}`}>
+                        {session.available ? 'Available' : 'Full'}
+                      </span>
+                    )}
                   </td>
                   <td>
                     <div className="actions-cell">
@@ -494,9 +545,18 @@ export default function AdminSessionsPage() {
 
               <div className="session-modal__field">
                 <label htmlFor="thumbnail">Session Thumbnail</label>
+                {(form.existingThumbnailUrl || form.thumbnail) && (
+                  <div style={{ marginBottom: '0.5rem' }}>
+                    <img
+                      src={form.thumbnail ? URL.createObjectURL(form.thumbnail) : (form.existingThumbnailUrl ?? undefined)}
+                      alt="Thumbnail preview"
+                      style={{ maxWidth: '200px', maxHeight: '120px', borderRadius: '8px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.1)' }}
+                    />
+                  </div>
+                )}
                 <label className="session-modal__upload" htmlFor="thumbnail">
                   <span className="session-modal__upload-icon">📤</span>
-                  <span>Click to upload or drag and drop</span>
+                  <span>{form.thumbnail ? 'Change image' : (form.existingThumbnailUrl ? 'Replace image' : 'Click to upload or drag and drop')}</span>
                   <small>JPEG, PNG - max 5MB</small>
                   {form.thumbnail ? <em>✓ {form.thumbnail.name}</em> : null}
                 </label>

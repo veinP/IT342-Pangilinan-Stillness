@@ -76,6 +76,7 @@ object ApiClient {
         email: String,
         password: String,
         confirmPassword: String,
+        selectedRole: String,
         callback: ApiCallback<RegisterResponse>
     ) {
         val registerRequest = RegisterRequest(
@@ -83,7 +84,7 @@ object ApiClient {
             email = email,
             password = password,
             confirmPassword = confirmPassword,
-            role = "ROLE_USER"
+            role = selectedRole
         )
         val body = gson.toJson(registerRequest)
             .toRequestBody(JSON_MEDIA)

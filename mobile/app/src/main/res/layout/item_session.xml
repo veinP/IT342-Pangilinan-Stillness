@@ -45,54 +45,55 @@
             android:paddingTop="16dp"
             android:paddingBottom="20dp">
 
-            <!-- Top Row: Title + Category Tag (Web .sn-card__top-row) -->
+            <!-- Top Row: Title -->
+            <TextView
+                android:id="@+id/tvSessionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Morning Yoga Flow"
+                android:textColor="#1E3A5F"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="4dp" />
+
+            <!-- Instructor Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
+                
+                <FrameLayout
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/bg_avatar_circle">
+                    <TextView
+                        android:id="@+id/tvAvatarInitials"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="IN"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
 
                 <TextView
-                    android:id="@+id/tvSessionTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Morning Yoga Flow"
-                    android:textColor="#1E3A5F"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
-
-                <TextView
-                    android:id="@+id/tvSessionCategory"
+                    android:id="@+id/tvSessionInstructor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:background="@drawable/bg_hg_rounded"
-                    android:backgroundTint="#EFF6FF"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="3dp"
-                    android:text="Meditation"
-                    android:textColor="#3B82F6"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
+                    android:text="with Instructor"
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- Instructor (Web .sn-card__instructor) -->
-            <TextView
-                android:id="@+id/tvSessionInstructor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="with Instructor"
-                android:textColor="#64748B"
-                android:textSize="14sp" />
-
-            <!-- Time Row (Web .sn-card__time) -->
+            <!-- Time Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="12dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -112,7 +113,7 @@
                     android:textSize="13sp" />
             </LinearLayout>
 
-            <!-- Spots Row (Web .sn-card__spots) -->
+            <!-- Location Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -121,35 +122,88 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/ivSpotsIcon"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
-                    android:src="@android:drawable/ic_menu_my_calendar"
-                    app:tint="#10B981" />
+                    android:src="@android:drawable/ic_dialog_map"
+                    app:tint="#94A3B8" />
 
                 <TextView
-                    android:id="@+id/tvSessionSpots"
+                    android:id="@+id/tvSessionLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
+                    android:text="TBD"
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Capacity Info -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvSessionSpots"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="10 spots remaining"
                     android:textColor="#10B981"
                     android:textSize="13sp"
                     android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvSessionRatio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0/10"
+                    android:textColor="#94A3B8"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <!-- Reserve Button (Web .sn-card__reserve) -->
-            <TextView
-                android:id="@+id/btnReserve"
+            <!-- Progress Bar -->
+            <ProgressBar
+                android:id="@+id/pbCapacity"
+                style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:progress="0"
+                android:progressDrawable="@drawable/bg_progress_bar" />
+
+            <!-- Footer: Price & Button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/bg_button_primary"
-                android:gravity="center"
-                android:text="Reserve Spot"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Free"
+                    android:textColor="#1E293B"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/btnReserve"
+                    android:layout_width="140dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_button_primary"
+                    android:gravity="center"
+                    android:text="Reserve Spot"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

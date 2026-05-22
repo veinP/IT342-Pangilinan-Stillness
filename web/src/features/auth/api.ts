@@ -3,6 +3,7 @@
  * Vertical slice: all auth-related API calls in one place.
  */
 import api from '../../shared/api/axios';
+import { GOOGLE_OAUTH_URL } from '../../shared/api/axios';
 export { API_BASE_URL, GOOGLE_OAUTH_URL } from '../../shared/api/axios';
 
 export interface RegisterRequest {
@@ -56,19 +57,17 @@ export const authApi = {
 };
 
 export async function startGoogleOAuth() {
-  const { API_BASE_URL, GOOGLE_OAUTH_URL } = await import('../../shared/api/axios');
-  try {
-    await fetch(`${API_BASE_URL}/auth/me`, { credentials: 'include' });
-  } catch {
-    throw new Error('Cannot reach auth server. Start the backend and try again.');
-  }
+  const currentOrigin = window.location.origin;
+  const oauthUrl = `${GOOGLE_OAUTH_URL}?frontend_url=${encodeURIComponent(currentOrigin)}`;
+
   try {
     if (window.top && window.top !== window) {
-      window.top.location.href = GOOGLE_OAUTH_URL;
+      window.top.location.assign(oauthUrl);
       return;
     }
   } catch {
     // Fall back to current frame navigation if top-level is inaccessible.
   }
-  window.location.href = GOOGLE_OAUTH_URL;
+
+  window.location.assign(oauthUrl);
 }

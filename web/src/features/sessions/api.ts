@@ -2,6 +2,7 @@
  * Sessions feature API — vertical slice
  */
 import api from '../../shared/api/axios';
+import { API_BASE_URL } from '../../shared/api/axios';
 import type { ApiResponse } from '../auth/api';
 
 export interface Instructor {
@@ -30,6 +31,9 @@ export interface Session {
   address?: string;
   duration?: number;
   available: boolean;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface SessionFilters {
@@ -58,6 +62,15 @@ export interface Pagination {
   pages: number;
 }
 
+function resolveThumbnailUrl(url: string | null | undefined, cacheKey?: string | null): string | null {
+  if (!url) return null;
+  // If it's already absolute or a data URL, keep it as-is
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  // It's a relative path like /sessions/{id}/thumbnail — resolve against API base
+  const version = cacheKey ? `?v=${encodeURIComponent(cacheKey)}` : '';
+  return `${API_BASE_URL}${url}${version}`;
+}
+
 export function normalizeSession(raw: Partial<Session> & { id?: string; title?: string }): Session {
   const capacity = raw.capacity ?? 1;
   const bookedCount = raw.bookedCount ?? 0;
@@ -73,12 +86,22 @@ export function normalizeSession(raw: Partial<Session> & { id?: string; title?: 
     bookedCount,
     price: raw.price ?? 0,
     type: raw.type ?? 'Meditation',
-    thumbnailUrl: raw.thumbnailUrl ?? null,
+    thumbnailUrl: resolveThumbnailUrl(raw.thumbnailUrl, raw.updatedAt ?? raw.createdAt),
     location: raw.location ?? 'StillNess Center',
     address: raw.address,
     duration: raw.duration,
     available,
+    status: raw.status ?? 'ACTIVE',
+    createdAt: raw.createdAt,
   };
+}
+
+function sortNewestFirst(sessions: Session[]): Session[] {
+  return [...sessions].sort((left, right) => {
+    const leftTime = left.createdAt ? new Date(left.createdAt).getTime() : 0;
+    const rightTime = right.createdAt ? new Date(right.createdAt).getTime() : 0;
+    return rightTime - leftTime;
+  });
 }
 
 function parseSessionsPayload(data: unknown): Session[] {
@@ -139,7 +162,7 @@ export const sessionsApi = {
         },
       });
       const payload = unwrap(res);
-      const sessions = parseSessionsPayload(payload);
+      const sessions = sortNewestFirst(parseSessionsPayload(payload));
       if (payload && typeof payload === 'object') {
         const candidate = payload as Record<string, unknown>;
         const paginationRaw = candidate.pagination as Partial<Pagination> | undefined;
@@ -203,6 +226,22 @@ export const sessionsApi = {
       await api.delete<ApiResponse<{ message: string }>>(`/sessions/${sessionId}`);
     } catch (err: unknown) {
       throw new Error(formatApiError(err, 'Failed to delete session.'));
+    }
+  },
+
+  async uploadSessionThumbnail(sessionId: string, file: File): Promise<Session> {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post<ApiResponse<unknown>>(`/sessions/${sessionId}/thumbnail`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 30000, // longer timeout for file uploads
+      });
+      const data = unwrap(res);
+      if (data && typeof data === 'object') return normalizeSession(data as Partial<Session>);
+      return normalizeSession({ id: sessionId });
+    } catch (err: unknown) {
+      throw new Error(formatApiError(err, 'Failed to upload thumbnail.'));
     }
   },
 };

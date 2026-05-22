@@ -61,11 +61,22 @@ class LoginActivity : Activity() {
                 override fun onSuccess(result: LoginResponse) {
                     runOnUiThread {
                         val token = result.data?.token
+                        val role = result.data?.user?.role
                         if (!token.isNullOrEmpty()) {
                             Log.d("LOGIN_SUCCESS", "Status Code: 200 OK")
                             SessionManager.saveToken(this@LoginActivity, token)
                             SessionManager.saveEmail(this@LoginActivity, email)
-                            startActivity(Intent(this@LoginActivity, DashboardActivity::class.java))
+                            if (role != null) {
+                                SessionManager.saveRole(this@LoginActivity, role)
+                            }
+                            
+                            val targetActivity = if (role == "ROLE_INSTRUCTOR") {
+                                Class.forName("edu.cit.pangilinan.stillness.features.admin.AdminSessionsActivity")
+                            } else {
+                                DashboardActivity::class.java
+                            }
+                            
+                            startActivity(Intent(this@LoginActivity, targetActivity))
                             finish()
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                         } else {

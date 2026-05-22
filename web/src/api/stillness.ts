@@ -1,4 +1,4 @@
-import api from './axios';
+import api, { API_BASE_URL } from './axios';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -100,6 +100,12 @@ export interface Pagination {
 
 
 
+function resolveThumbnailUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith('http') || url.startsWith('data:')) return url;
+  return `${API_BASE_URL}${url}`;
+}
+
 function normalizeSession(raw: Partial<Session> & { id?: string; title?: string }): Session {
   const capacity = raw.capacity ?? 1;
   const bookedCount = raw.bookedCount ?? 0;
@@ -116,7 +122,7 @@ function normalizeSession(raw: Partial<Session> & { id?: string; title?: string 
     bookedCount,
     price: raw.price ?? 0,
     type: raw.type ?? 'Meditation',
-    thumbnailUrl: raw.thumbnailUrl ?? null,
+    thumbnailUrl: resolveThumbnailUrl(raw.thumbnailUrl),
     location: raw.location ?? 'StillNess Center',
     address: raw.address,
     duration: raw.duration,
@@ -393,6 +399,22 @@ export const stillnessApi = {
       await api.delete<ApiResponse<{ message: string }>>(`/sessions/${sessionId}`);
     } catch (err: unknown) {
       throw new Error(formatApiError(err, 'Failed to delete session.'));
+    }
+  },
+
+  async uploadSessionThumbnail(sessionId: string, file: File): Promise<Session> {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.post<ApiResponse<unknown>>(`/sessions/${sessionId}/thumbnail`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        timeout: 30000,
+      });
+      const data = unwrap(res);
+      if (data && typeof data === 'object') return normalizeSession(data as Partial<Session>);
+      return normalizeSession({ id: sessionId });
+    } catch (err: unknown) {
+      throw new Error(formatApiError(err, 'Failed to upload thumbnail.'));
     }
   },
 

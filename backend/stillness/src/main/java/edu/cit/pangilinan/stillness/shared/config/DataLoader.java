@@ -8,6 +8,7 @@ import edu.cit.pangilinan.stillness.shared.repository.SessionRepository;
 import edu.cit.pangilinan.stillness.shared.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -30,8 +31,17 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Override
     public void run(String... args) throws Exception {
+        try {
+            jdbcTemplate.execute("ALTER TABLE sessions ALTER COLUMN thumbnail_url TYPE TEXT;");
+        } catch (Exception e) {
+            System.err.println("Could not alter sessions table schema to TEXT: " + e.getMessage());
+        }
+
         if (sessionRepository.count() == 0) {
             User admin = User.builder()
                 .email("admin@stillness.com")

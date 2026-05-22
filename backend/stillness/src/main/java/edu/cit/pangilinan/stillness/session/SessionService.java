@@ -12,9 +12,12 @@ import edu.cit.pangilinan.stillness.shared.repository.SessionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,7 +36,24 @@ public class SessionService {
 
 	@Transactional
 	public Page<SessionDto> getAllSessions(Pageable pageable) {
-		return sessionRepository.findAll(pageable).map(this::convertToDto);
+		sessionRepository.archivePastSessions(LocalDateTime.now());
+		Pageable sortedPageable = PageRequest.of(
+				pageable.getPageNumber(),
+				pageable.getPageSize(),
+				Sort.by(Sort.Direction.DESC, "createdAt")
+		);
+		return sessionRepository.findByStatusNot("ARCHIVED", sortedPageable).map(this::convertToDto);
+	}
+
+	@Transactional
+	public Page<SessionDto> getAllSessionsAdmin(Pageable pageable) {
+		sessionRepository.archivePastSessions(LocalDateTime.now());
+		Pageable sortedPageable = PageRequest.of(
+				pageable.getPageNumber(),
+				pageable.getPageSize(),
+				Sort.by(Sort.Direction.DESC, "createdAt")
+		);
+		return sessionRepository.findAll(sortedPageable).map(this::convertToDto);
 	}
 
 	@Transactional
@@ -106,6 +126,19 @@ public class SessionService {
 	}
 
 	@Transactional
+	public SessionDetailDto updateThumbnailUrl(UUID id, String thumbnailUrl) {
+		Optional<Session> optionalSession = sessionRepository.findById(id);
+		if (optionalSession.isEmpty()) {
+			return null;
+		}
+
+		Session session = optionalSession.get();
+		session.setThumbnailUrl(thumbnailUrl);
+		Session saved = sessionRepository.save(session);
+		return convertToDetailDto(saved);
+	}
+
+	@Transactional
 	public void validateCapacity(UUID sessionId) {
 		Optional<Session> sessionOpt = sessionRepository.findById(sessionId);
 		if (sessionOpt.isEmpty()) {
@@ -134,6 +167,9 @@ public class SessionService {
 		long bookedCount = bookingRepository.countBySessionAndStatus(session, "CONFIRMED");
 		int limitedBookedCount = (int) Math.min(bookedCount, session.getCapacity());
 
+		// Use a lightweight reference URL instead of embedding huge base64 in JSON
+		String thumbUrl = buildThumbnailRefUrl(session);
+
 		return SessionDto.builder()
 				.id(session.getId())
 				.title(session.getTitle())
@@ -145,10 +181,11 @@ public class SessionService {
 				.capacity(session.getCapacity())
 				.bookedCount(limitedBookedCount)
 				.price(session.getPrice())
-				.thumbnailUrl(session.getThumbnailUrl())
+				.thumbnailUrl(thumbUrl)
 				.location(session.getLocation())
 				.status(session.getStatus())
 				.createdAt(session.getCreatedAt())
+				.updatedAt(session.getUpdatedAt())
 				.build();
 	}
 
@@ -188,6 +225,9 @@ public class SessionService {
 		long bookedCount = bookingRepository.countBySessionAndStatus(session, "CONFIRMED");
 		int limitedBookedCount = (int) Math.min(bookedCount, capacity);
 
+		// Use a lightweight reference URL instead of embedding huge base64 in JSON
+		String thumbUrl = buildThumbnailRefUrl(session);
+
 		return SessionDetailDto.builder()
 				.id(session.getId())
 				.title(session.getTitle())
@@ -199,11 +239,38 @@ public class SessionService {
 				.capacity(capacity)
 				.bookedCount(limitedBookedCount)
 				.price(session.getPrice())
-				.thumbnailUrl(session.getThumbnailUrl())
+				.thumbnailUrl(thumbUrl)
 				.location(session.getLocation())
 				.status(session.getStatus())
 				.createdAt(session.getCreatedAt())
+				.updatedAt(session.getUpdatedAt())
 				.available("ACTIVE".equals(session.getStatus()) && capacity > limitedBookedCount)
 				.build();
+	}
+
+	/**
+	 * Build a lightweight reference URL for the thumbnail instead of embedding
+	 * the full base64 blob in every JSON response.
+	 */
+	private String buildThumbnailRefUrl(Session session) {
+		if (session.getThumbnailUrl() == null || session.getThumbnailUrl().isBlank()) {
+			return null;
+		}
+		// If it's already a regular URL (not base64), keep it as-is
+		if (!session.getThumbnailUrl().startsWith("data:")) {
+			return session.getThumbnailUrl();
+		}
+		return "/sessions/" + session.getId() + "/thumbnail";
+	}
+
+	/**
+	 * Return the raw base64 data stored in the DB for the thumbnail,
+	 * or null if no thumbnail exists.
+	 */
+	@Transactional
+	public String getThumbnailData(UUID id) {
+		return sessionRepository.findById(id)
+				.map(Session::getThumbnailUrl)
+				.orElse(null);
 	}
 }
