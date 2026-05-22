@@ -1,5 +1,5 @@
 import api from './axios';
-import { API_BASE_URL, GOOGLE_OAUTH_URL } from './axios';
+import { GOOGLE_OAUTH_URL } from './axios';
 
 export interface RegisterRequest {
   fullName: string;
@@ -53,20 +53,13 @@ export const authApi = {
 
 export async function startGoogleOAuth() {
   try {
-    // A 401 here is still fine; it confirms backend connectivity.
-    await fetch(`${API_BASE_URL}/auth/me`, { credentials: 'include' });
-  } catch {
-    throw new Error('Cannot reach auth server. Start the backend and try again.');
-  }
-
-  try {
     if (window.top && window.top !== window) {
-      window.top.location.href = GOOGLE_OAUTH_URL;
+      window.top.location.assign(GOOGLE_OAUTH_URL);
       return;
     }
   } catch {
     // If top-level window is inaccessible, fall back to current frame navigation.
   }
 
-  window.location.href = GOOGLE_OAUTH_URL;
+  window.location.assign(GOOGLE_OAUTH_URL);
 }

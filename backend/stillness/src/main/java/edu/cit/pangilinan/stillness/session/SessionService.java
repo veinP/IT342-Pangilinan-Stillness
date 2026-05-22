@@ -12,6 +12,8 @@ import edu.cit.pangilinan.stillness.shared.repository.SessionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +37,23 @@ public class SessionService {
 	@Transactional
 	public Page<SessionDto> getAllSessions(Pageable pageable) {
 		sessionRepository.archivePastSessions(LocalDateTime.now());
-		return sessionRepository.findByStatusNot("ARCHIVED", pageable).map(this::convertToDto);
+		Pageable sortedPageable = PageRequest.of(
+				pageable.getPageNumber(),
+				pageable.getPageSize(),
+				Sort.by(Sort.Direction.DESC, "createdAt")
+		);
+		return sessionRepository.findByStatusNot("ARCHIVED", sortedPageable).map(this::convertToDto);
 	}
 
 	@Transactional
 	public Page<SessionDto> getAllSessionsAdmin(Pageable pageable) {
 		sessionRepository.archivePastSessions(LocalDateTime.now());
-		return sessionRepository.findAll(pageable).map(this::convertToDto);
+		Pageable sortedPageable = PageRequest.of(
+				pageable.getPageNumber(),
+				pageable.getPageSize(),
+				Sort.by(Sort.Direction.DESC, "createdAt")
+		);
+		return sessionRepository.findAll(sortedPageable).map(this::convertToDto);
 	}
 
 	@Transactional
