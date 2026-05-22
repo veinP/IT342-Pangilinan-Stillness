@@ -185,6 +185,7 @@ public class SessionService {
 				.location(session.getLocation())
 				.status(session.getStatus())
 				.createdAt(session.getCreatedAt())
+				.updatedAt(session.getUpdatedAt())
 				.build();
 	}
 
@@ -242,6 +243,7 @@ public class SessionService {
 				.location(session.getLocation())
 				.status(session.getStatus())
 				.createdAt(session.getCreatedAt())
+				.updatedAt(session.getUpdatedAt())
 				.available("ACTIVE".equals(session.getStatus()) && capacity > limitedBookedCount)
 				.build();
 	}

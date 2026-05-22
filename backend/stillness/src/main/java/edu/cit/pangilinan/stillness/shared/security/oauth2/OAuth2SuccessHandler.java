@@ -81,6 +81,21 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String jwt = jwtProvider.generateToken(userDetails);
 
-        response.sendRedirect(frontendUrl + "/oauth2/callback?token=" + jwt);
+        String dynamicFrontendUrl = null;
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("oauth2_frontend_url".equals(cookie.getName())) {
+                    dynamicFrontendUrl = cookie.getValue();
+                    // Clear the cookie by setting max age to 0
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                    break;
+                }
+            }
+        }
+
+        String finalRedirectUrl = (dynamicFrontendUrl != null) ? dynamicFrontendUrl : frontendUrl;
+        response.sendRedirect(finalRedirectUrl + "/oauth2/callback?token=" + jwt);
     }
 }

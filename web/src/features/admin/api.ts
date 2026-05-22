@@ -7,6 +7,14 @@ import type { Session } from '../sessions/api';
 export type { Session };
 import { normalizeSession } from '../sessions/api';
 
+function sortNewestFirst(sessions: Session[]): Session[] {
+  return [...sessions].sort((left, right) => {
+    const leftTime = left.createdAt ? new Date(left.createdAt).getTime() : 0;
+    const rightTime = right.createdAt ? new Date(right.createdAt).getTime() : 0;
+    return rightTime - leftTime;
+  });
+}
+
 export interface PaymentSummary {
   totalRevenue: number;
   paidTransactions: number;
@@ -50,7 +58,7 @@ export const adminApi = {
       if (payload && typeof payload === 'object') {
         const objectPayload = payload as Record<string, unknown>;
         if (Array.isArray(objectPayload.sessions)) {
-          return objectPayload.sessions.map((entry) => normalizeSession(entry as Partial<Session>));
+          return sortNewestFirst(objectPayload.sessions.map((entry) => normalizeSession(entry as Partial<Session>)));
         }
       }
       return [];
@@ -64,10 +72,10 @@ export const adminApi = {
         if (payload && typeof payload === 'object') {
           const objectPayload = payload as Record<string, unknown>;
           if (Array.isArray(objectPayload.sessions)) {
-            return objectPayload.sessions.map((entry) => normalizeSession(entry as Partial<Session>));
+            return sortNewestFirst(objectPayload.sessions.map((entry) => normalizeSession(entry as Partial<Session>)));
           }
           if (Array.isArray(objectPayload.content)) {
-            return objectPayload.content.map((entry) => normalizeSession(entry as Partial<Session>));
+            return sortNewestFirst(objectPayload.content.map((entry) => normalizeSession(entry as Partial<Session>)));
           }
         }
         return [];

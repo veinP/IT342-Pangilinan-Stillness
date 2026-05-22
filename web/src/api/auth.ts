@@ -52,14 +52,17 @@ export const authApi = {
 };
 
 export async function startGoogleOAuth() {
+  const currentOrigin = window.location.origin;
+  const oauthUrl = `${GOOGLE_OAUTH_URL}?frontend_url=${encodeURIComponent(currentOrigin)}`;
+
   try {
     if (window.top && window.top !== window) {
-      window.top.location.assign(GOOGLE_OAUTH_URL);
+      window.top.location.assign(oauthUrl);
       return;
     }
   } catch {
     // If top-level window is inaccessible, fall back to current frame navigation.
   }
 
-  window.location.assign(GOOGLE_OAUTH_URL);
+  window.location.assign(oauthUrl);
 }

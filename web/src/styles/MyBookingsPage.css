@@ -140,6 +140,13 @@
   font-size: 13px;
   flex-shrink: 0;
   border: 1px solid #bae6fd;
+  overflow: hidden;
+}
+
+.mb-card__thumb-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .mb-card__content {

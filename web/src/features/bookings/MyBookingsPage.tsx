@@ -72,7 +72,11 @@ function BookingCard({ booking, featured = false, onCancel }: {
   return (
     <article className={`mb-card${featured ? ' mb-card--featured' : ''}`}>
       <div className="mb-card__thumb">
-        <span>{featured ? 'Confirmed' : 'Session'}</span>
+        {s.thumbnailUrl ? (
+          <img src={s.thumbnailUrl} alt={s.title} className="mb-card__thumb-image" />
+        ) : (
+          <span>{featured ? 'Confirmed' : 'Session'}</span>
+        )}
       </div>
 
       <div className="mb-card__content">
