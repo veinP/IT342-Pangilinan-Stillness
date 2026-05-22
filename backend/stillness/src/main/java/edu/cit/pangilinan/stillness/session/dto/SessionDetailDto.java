@@ -26,6 +26,7 @@ public class SessionDetailDto {
     private String location;
     private String status;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private boolean available;
 
     @Getter

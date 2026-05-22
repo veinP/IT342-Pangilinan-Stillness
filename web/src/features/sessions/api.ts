@@ -32,6 +32,8 @@ export interface Session {
   duration?: number;
   available: boolean;
   status?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface SessionFilters {
@@ -60,12 +62,13 @@ export interface Pagination {
   pages: number;
 }
 
-function resolveThumbnailUrl(url: string | null | undefined): string | null {
+function resolveThumbnailUrl(url: string | null | undefined, cacheKey?: string | null): string | null {
   if (!url) return null;
   // If it's already absolute or a data URL, keep it as-is
   if (url.startsWith('http') || url.startsWith('data:')) return url;
   // It's a relative path like /sessions/{id}/thumbnail — resolve against API base
-  return `${API_BASE_URL}${url}`;
+  const version = cacheKey ? `?v=${encodeURIComponent(cacheKey)}` : '';
+  return `${API_BASE_URL}${url}${version}`;
 }
 
 export function normalizeSession(raw: Partial<Session> & { id?: string; title?: string }): Session {
@@ -83,13 +86,22 @@ export function normalizeSession(raw: Partial<Session> & { id?: string; title?: 
     bookedCount,
     price: raw.price ?? 0,
     type: raw.type ?? 'Meditation',
-    thumbnailUrl: resolveThumbnailUrl(raw.thumbnailUrl),
+    thumbnailUrl: resolveThumbnailUrl(raw.thumbnailUrl, raw.updatedAt ?? raw.createdAt),
     location: raw.location ?? 'StillNess Center',
     address: raw.address,
     duration: raw.duration,
     available,
     status: raw.status ?? 'ACTIVE',
+    createdAt: raw.createdAt,
   };
+}
+
+function sortNewestFirst(sessions: Session[]): Session[] {
+  return [...sessions].sort((left, right) => {
+    const leftTime = left.createdAt ? new Date(left.createdAt).getTime() : 0;
+    const rightTime = right.createdAt ? new Date(right.createdAt).getTime() : 0;
+    return rightTime - leftTime;
+  });
 }
 
 function parseSessionsPayload(data: unknown): Session[] {
@@ -150,7 +162,7 @@ export const sessionsApi = {
         },
       });
       const payload = unwrap(res);
-      const sessions = parseSessionsPayload(payload);
+      const sessions = sortNewestFirst(parseSessionsPayload(payload));
       if (payload && typeof payload === 'object') {
         const candidate = payload as Record<string, unknown>;
         const paginationRaw = candidate.pagination as Partial<Pagination> | undefined;

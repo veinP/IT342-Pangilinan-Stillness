@@ -2,6 +2,7 @@ package edu.cit.pangilinan.stillness.shared.config;
 
 import edu.cit.pangilinan.stillness.shared.security.jwt.JwtAuthFilter;
 import edu.cit.pangilinan.stillness.shared.security.oauth2.OAuth2SuccessHandler;
+import edu.cit.pangilinan.stillness.shared.security.oauth2.OAuth2FrontendUrlFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FrontendUrlFilter oAuth2FrontendUrlFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,6 +57,7 @@ public class SecurityConfig {
                         .successHandler(oAuth2SuccessHandler)
                 )
                 .authenticationProvider(authenticationProvider())
+                .addFilterBefore(oAuth2FrontendUrlFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

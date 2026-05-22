@@ -244,12 +244,13 @@ export default function SessionsPage() {
                 <article key={session.id} className="sc-card">
                   <div
                     className="sc-card__thumb"
-                    style={{
-                      background: session.thumbnailUrl
-                        ? `linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5)), url(${session.thumbnailUrl}) center/cover no-repeat`
-                        : getThumbBg(),
-                    }}
                   >
+                    {session.thumbnailUrl ? (
+                      <img src={session.thumbnailUrl} alt="" className="sc-card__thumb-image" />
+                    ) : (
+                      <div className="sc-card__thumb-fallback" style={{ background: getThumbBg() }} />
+                    )}
+                    <div className="sc-card__thumb-overlay" />
                     <span className={`sc-card__type-badge ${getTypeBadgeClass(session.type)}`}>
                       {session.type}
                     </span>

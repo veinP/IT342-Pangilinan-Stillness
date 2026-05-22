@@ -91,7 +91,7 @@ class SessionServiceTest {
     void getAllSessions_shouldReturnPaginatedSessions() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Session> sessionPage = new PageImpl<>(List.of(session));
-        when(sessionRepository.findAll(pageable)).thenReturn(sessionPage);
+        when(sessionRepository.findByStatusNot(eq("ARCHIVED"), any(Pageable.class))).thenReturn(sessionPage);
         when(bookingRepository.countBySessionAndStatus(session, "CONFIRMED")).thenReturn(5L);
 
         Page<SessionDto> result = sessionService.getAllSessions(pageable);

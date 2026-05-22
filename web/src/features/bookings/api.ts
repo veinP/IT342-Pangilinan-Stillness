@@ -81,12 +81,19 @@ export const bookingsApi = {
     try {
       const res = await api.get<ApiResponse<unknown>>('/bookings/me');
       const payload = unwrap(res);
-      if (Array.isArray(payload)) return payload as Booking[];
-      if (payload && typeof payload === 'object') {
+      let rawBookings: any[] = [];
+      if (Array.isArray(payload)) {
+        rawBookings = payload;
+      } else if (payload && typeof payload === 'object') {
         const bookings = (payload as Record<string, unknown>).bookings;
-        if (Array.isArray(bookings)) return bookings as Booking[];
+        if (Array.isArray(bookings)) {
+          rawBookings = bookings;
+        }
       }
-      return [];
+      return rawBookings.map((b: any) => ({
+        ...b,
+        session: normalizeSession(b.session),
+      }));
     } catch {
       return [];
     }

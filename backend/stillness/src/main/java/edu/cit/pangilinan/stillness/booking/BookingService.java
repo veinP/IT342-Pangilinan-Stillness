@@ -249,7 +249,7 @@ public class BookingService {
                     .capacity(s.getCapacity())
                     .price(s.getPrice())
                     .instructor(instructorDto)
-                    .thumbnailUrl(s.getThumbnailUrl())
+                    .thumbnailUrl(buildThumbnailRefUrl(s))
                     .location(s.getLocation())
                     .status(s.getStatus())
                     .createdAt(s.getCreatedAt())
@@ -270,5 +270,16 @@ public class BookingService {
                 .paymentStatus(paymentStatus)
                 .paymentIntentId(paymentIntentId)
                 .build();
+    }
+
+    private String buildThumbnailRefUrl(Session session) {
+        if (session.getThumbnailUrl() == null || session.getThumbnailUrl().isBlank()) {
+            return null;
+        }
+        // If it's already a regular URL (not base64), keep it as-is
+        if (!session.getThumbnailUrl().startsWith("data:")) {
+            return session.getThumbnailUrl();
+        }
+        return "/sessions/" + session.getId() + "/thumbnail";
     }
 }

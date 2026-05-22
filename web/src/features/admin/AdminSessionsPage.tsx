@@ -183,12 +183,15 @@ export default function AdminSessionsPage() {
         savedSession = await sessionsApi.createSession(payload);
       }
 
+      let hasUploadError = false;
       // Upload thumbnail if a file was selected
       if (form.thumbnail && savedSession?.id) {
         try {
-          await sessionsApi.uploadSessionThumbnail(savedSession.id, form.thumbnail);
+          const updatedSession = await sessionsApi.uploadSessionThumbnail(savedSession.id, form.thumbnail);
+          setSessions((prev) => prev.map((session) => (session.id === updatedSession.id ? updatedSession : session)));
         } catch (uploadErr) {
           console.warn('Thumbnail upload failed:', uploadErr);
+          hasUploadError = true;
           // Session was saved; warn but don't block
           setMessage({ type: 'success', text: (editingId ? 'Session updated' : 'Session created') + ' (thumbnail upload failed)' });
         }
@@ -196,11 +199,13 @@ export default function AdminSessionsPage() {
 
       const refreshedSessions = await adminApi.getAdminSessions();
       setSessions(refreshedSessions);
-      setMessage({ type: 'success', text: editingId ? 'Session updated successfully' : 'Session created successfully' });
+      if (!hasUploadError) {
+        setMessage({ type: 'success', text: editingId ? 'Session updated successfully' : 'Session created successfully' });
+      }
       setTimeout(() => {
         closeModal();
         setMessage(null);
-      }, 1500);
+      }, 2500);
     } catch (error) {
       setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to save session' });
     }
@@ -236,8 +241,12 @@ export default function AdminSessionsPage() {
   return (
     <AppShell>
       {message && (
-        <div className={`alert alert-${message.type}`}>
-          {message.text}
+        <div className={`premium-toast premium-toast--${message.type}`}>
+          <div className="premium-toast__icon">{message.type === 'success' ? '✓' : '✕'}</div>
+          <div className="premium-toast__content">
+            <div className="premium-toast__title">{message.type === 'success' ? 'Successful' : 'Error'}</div>
+            <div className="premium-toast__text">{message.text}</div>
+          </div>
         </div>
       )}
 
