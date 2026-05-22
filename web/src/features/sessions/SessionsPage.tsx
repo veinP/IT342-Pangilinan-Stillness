@@ -237,7 +237,8 @@ export default function SessionsPage() {
           <div className="sc-grid">
             {sessions.map((session) => {
               const { remaining, pct, tier } = getCapacityInfo(session.bookedCount ?? 0, session.capacity ?? 0);
-              const available = remaining > 0;
+              const isPast = new Date(session.startTime).getTime() < Date.now();
+              const available = remaining > 0 && session.status !== 'ARCHIVED' && !isPast;
 
               return (
                 <article key={session.id} className="sc-card">
@@ -281,7 +282,7 @@ export default function SessionsPage() {
                     {available ? (
                       <Link to={`/sessions/${session.id}`} className="sc-card__reserve">Reserve Spot</Link>
                     ) : (
-                      <span className="sc-card__full">Session Full</span>
+                      <span className="sc-card__full">{isPast || session.status === 'ARCHIVED' ? 'Ended' : 'Full'}</span>
                     )}
                   </div>
                 </article>

@@ -132,12 +132,20 @@ export default function BookingCheckoutPage() {
   }, [session]);
 
   const isFreeSession = totals.total === 0;
+  const isPast = session ? new Date(session.startTime).getTime() < Date.now() : false;
+  const isArchived = session?.status === 'ARCHIVED';
+  const isUnavailable = isPast || isArchived;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!session) {
       setSubmitError('Session details are unavailable.');
+      return;
+    }
+
+    if (isUnavailable) {
+      setSubmitError('This session is no longer available for booking.');
       return;
     }
 
@@ -357,8 +365,8 @@ export default function BookingCheckoutPage() {
               <span>Save card for future bookings</span>
             </label>
 
-            <button type="submit" className="bc-submit" disabled={processing}>
-              {processing ? 'Processing...' : isFreeSession ? 'Confirm Free Booking' : 'Pay & Confirm Booking'}
+            <button type="submit" className="bc-submit" disabled={processing || isUnavailable}>
+              {isUnavailable ? 'Session Unavailable' : processing ? 'Processing...' : isFreeSession ? 'Confirm Free Booking' : 'Pay & Confirm Booking'}
             </button>
 
             <p className="bc-secure-copy">

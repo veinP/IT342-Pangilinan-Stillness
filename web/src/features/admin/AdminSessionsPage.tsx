@@ -48,6 +48,7 @@ export default function AdminSessionsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'ended'>('upcoming');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -63,14 +64,16 @@ export default function AdminSessionsPage() {
 
   const filteredSessions = useMemo(() => {
     return sessions.filter((session) => {
+      const isPast = new Date(session.startTime).getTime() < Date.now() || session.status === 'ARCHIVED';
+      const matchesTab = activeTab === 'upcoming' ? !isPast : isPast;
       const matchesSearch = searchQuery === '' || 
         session.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         session.instructor.fullName.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesType = filterType === '' || session.type === filterType;
-      const matchesAvailable = filterStatus === '' || (filterStatus === 'Active' ? session.available : !session.available);
-      return matchesSearch && matchesType && matchesAvailable;
+      const matchesAvailable = filterStatus === '' || (filterStatus === 'Active' ? session.available && !isPast : !session.available || isPast);
+      return matchesTab && matchesSearch && matchesType && matchesAvailable;
     });
-  }, [sessions, searchQuery, filterType, filterStatus]);
+  }, [sessions, searchQuery, filterType, filterStatus, activeTab]);
 
   const stats = useMemo(() => {
     return {
@@ -248,6 +251,22 @@ export default function AdminSessionsPage() {
             + Create New Session
           </button>
         </div>
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', borderBottom: '1px solid #bfdbfe' }}>
+          <button 
+            type="button" 
+            style={{ padding: '0.5rem 1rem', background: 'transparent', border: 'none', borderBottom: activeTab === 'upcoming' ? '2px solid #3B82F6' : '2px solid transparent', color: activeTab === 'upcoming' ? '#1e3a8a' : '#64748b', cursor: 'pointer', fontWeight: activeTab === 'upcoming' ? 'bold' : 'normal', transition: 'all 0.2s' }}
+            onClick={() => setActiveTab('upcoming')}
+          >
+            Upcoming Sessions
+          </button>
+          <button 
+            type="button" 
+            style={{ padding: '0.5rem 1rem', background: 'transparent', border: 'none', borderBottom: activeTab === 'ended' ? '2px solid #3B82F6' : '2px solid transparent', color: activeTab === 'ended' ? '#1e3a8a' : '#64748b', cursor: 'pointer', fontWeight: activeTab === 'ended' ? 'bold' : 'normal', transition: 'all 0.2s' }}
+            onClick={() => setActiveTab('ended')}
+          >
+            Ended Sessions
+          </button>
+        </div>
       </section>
 
       <section className="stats-grid">
@@ -371,9 +390,13 @@ export default function AdminSessionsPage() {
                   </td>
                   <td>{session.price > 0 ? `$${session.price.toFixed(2)}` : <span className="badge badge-free">Free</span>}</td>
                   <td>
-                    <span className={`badge ${session.available ? 'badge-active' : 'badge-inactive'}`}>
-                      {session.available ? 'Available' : 'Unavailable'}
-                    </span>
+                    {session.status === 'ARCHIVED' || new Date(session.startTime).getTime() < Date.now() ? (
+                      <span className="badge badge-inactive">Ended</span>
+                    ) : (
+                      <span className={`badge ${session.available ? 'badge-active' : 'badge-inactive'}`}>
+                        {session.available ? 'Available' : 'Full'}
+                      </span>
+                    )}
                   </td>
                   <td>
                     <div className="actions-cell">
